@@ -16,7 +16,7 @@ public class Lobby {
     public Lobby() {
         modes = new HashMap<>();
         modes.put("echo", new EchoMode()); // Register Echo Mode
-//        modes.put("todo", new ToDoMode());
+        modes.put("todo", new ToDoMode());
 //        modes.put("", new Mode());
     }
 
