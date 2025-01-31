@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class ResponseGenerator {
     private Map<String, String> responseMap;
+//    private
 
     public ResponseGenerator() {
         responseMap = new HashMap<>();
