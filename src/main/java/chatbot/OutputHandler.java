@@ -1,7 +1,14 @@
 package chatbot;
 
 /**
- * Handles all chatbot outputs to the user.
+ * Handles all chatbot outputs to the user, ensuring proper formatting and readability.
+ * This class provides methods to:
+ * - Print standard messages with consistent formatting.
+ * - Display informational, warning, and error messages.
+ * - Apply indentation and separators to outputs for better readability.
+ *
+ * Usage:
+ * Call static methods like {@code OutputHandler.printInfo("Message")} to display messages.
  */
 public class OutputHandler {
 
@@ -16,10 +23,11 @@ public class OutputHandler {
              _____                         
             | ____|   __ _    __ _    ___  
             |  _|    / _` |  / _` |  / _ \\ 
-            | |___  | (_| | | (_| | | (_) |    <-- Yep this is an egg
+            | |___  | (_| | | (_| | | (_) |  <-- Yep this is also an egg
             |_____|  \\__, |  \\__, |  \\___/ 
                      |___/   |___/         
             """;
+
     public final static String LINE_SEPARATOR = "_________________________________________________________________________\n";
     public final static String INDENT = "    ";
 
@@ -44,10 +52,6 @@ public class OutputHandler {
     public static void printError(String message) {
         print("[ERROR] " + message);
     }
-
-//    public static void printPrompt(String prompt) {
-//        print(prompt + " ");
-//    }
 
     public static void print(String response) {
         String indentedResponse = INDENT + response.replace("\n", "\n" + INDENT);

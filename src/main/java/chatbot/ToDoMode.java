@@ -4,7 +4,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * A mode that allows the user to add tasks and list them.
+ * A mode that allows the user to add tasks, list them, modify, delete,
+ * and mark them as done, urgent, or important.
  */
 public class ToDoMode implements Mode {
     private static final String FILE_PATH = "data/todo_list.txt";
@@ -92,12 +93,18 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Adds a new task to the list.
+     */
     private void addTask(String task) {
         tasks.add(new Task(task, false, false, false)); // Default to not done
         saveTasks();
         OutputHandler.print("Added: " + task);
     }
 
+    /**
+     * Lists all tasks with their statuses.
+     */
     private void listTasks() {
         if (tasks.isEmpty()) {
             OutputHandler.print("Your task list is empty.");
@@ -112,6 +119,9 @@ public class ToDoMode implements Mode {
         OutputHandler.print(output.toString());
     }
 
+    /**
+     * Marks tasks as completed or not.
+     */
     private void markTasks(String arguments) {
         updateTaskStatus(arguments, true, "marked as done");
     }
@@ -120,29 +130,9 @@ public class ToDoMode implements Mode {
         updateTaskStatus(arguments, false, "marked as not done");
     }
 
-    private void updateTaskUrgency(String arguments, boolean status, String message) {
-        try {
-            String[] parts = arguments.split(" ");
-            List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                int index = Integer.parseInt(part) - 1;
-                if (index >= 0 && index < tasks.size()) {
-                    tasks.get(index).isUrgent = status;
-                    indices.add(index + 1);
-                }
-            }
-            if (!indices.isEmpty()) {
-                saveTasks();
-                OutputHandler.print("Successfully " + message + " tasks: " + indices);
-            }
-            else {
-                OutputHandler.printError("Invalid task indices.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: urg/noturg [task numbers]");
-        }
-    }
-
+    /**
+     * Marks tasks as completed or not.
+     */
     private void updateTaskStatus(String arguments, boolean status, String message) {
         try {
             String[] parts = arguments.split(" ");
@@ -166,6 +156,35 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Updates task urgency status.
+     */
+    private void updateTaskUrgency(String arguments, boolean status, String message) {
+        try {
+            String[] parts = arguments.split(" ");
+            List<Integer> indices = new ArrayList<>();
+            for (String part : parts) {
+                int index = Integer.parseInt(part) - 1;
+                if (index >= 0 && index < tasks.size()) {
+                    tasks.get(index).isUrgent = status;
+                    indices.add(index + 1);
+                }
+            }
+            if (!indices.isEmpty()) {
+                saveTasks();
+                OutputHandler.print("Successfully " + message + " tasks: " + indices);
+            }
+            else {
+                OutputHandler.printError("Invalid task indices.");
+            }
+        } catch (Exception e) {
+            OutputHandler.printError("Usage: urg/noturg [task numbers]");
+        }
+    }
+
+    /**
+     * Updates task importance status.
+     */
     private void updateTaskImportance(String arguments, boolean status, String message) {
         try {
             String[] parts = arguments.split(" ");
@@ -189,6 +208,9 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Modifies a task's description.
+     */
     private void modifyTask(String arguments) {
         try {
             String[] parts = arguments.split(" ", 2);
@@ -206,6 +228,9 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Deletes tasks by index.
+     */
     private void deleteTasks(String arguments) {
         try {
             String[] parts = arguments.split(" ");
@@ -232,6 +257,9 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Loads tasks from a file.
+     */
     private void loadTasks() {
         File file = new File(FILE_PATH);
         if (!file.exists()) {
@@ -252,6 +280,9 @@ public class ToDoMode implements Mode {
         }
     }
 
+    /**
+     * Saves tasks to a file.
+     */
     private void saveTasks() {
         File directory = new File("data");
         if (!directory.exists()) {
