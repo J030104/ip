@@ -3,6 +3,7 @@ package chatbot;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 import chatbot.InputHandler;
 import chatbot.OutputHandler;
 
@@ -11,7 +12,7 @@ import chatbot.OutputHandler;
  */
 
 public class Lobby {
-    private Map<String, Mode> modes;
+    private final Map<String, Mode> modes;
 
     public Lobby() {
         modes = new HashMap<>();
@@ -27,12 +28,16 @@ public class Lobby {
         String availableModes = String.join(", ", modes.keySet());
 
         // Standardize the output method.
-        final String welcome = "Welcome to the Chatbot Lobby!\n" +
-                "Type a mode name to enter a mode.\n" +
-                "Available modes: " + availableModes + "\n" +
-                "Type 'help' for assistance. (Currently Unavailable)";
+        final String welcome = """
+                Welcome to the Chatbot Lobby!
+                Type a mode name to enter a mode.
+                
+                Available modes: %s
+                Type 'help' for assistance. (Currently Unavailable)"""
+                .formatted(availableModes);
 
-        OutputHandler.print(welcome);
+        OutputHandler.printInfo(welcome);
+
 
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
@@ -43,13 +48,16 @@ public class Lobby {
             if (input.equals("exit")) {
                 OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
                 break;
-            } else if (input.equals("help")) {
+            }
+            else if (input.equals("help")) {
 //                OutputHandler.printInfo(
 //                HelpSystem.showHelp("lobby");
-            } else if (modes.containsKey(input)) {
+            }
+            else if (modes.containsKey(input)) {
                 modes.get(input).start(scanner);
                 OutputHandler.printInfo("Returned to the Lobby.");
-            } else {
+            }
+            else {
                 OutputHandler.printInfo("Unknown command. Type 'help' for available commands.");
             }
         }
