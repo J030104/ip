@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,10 +18,25 @@ import java.util.Scanner;
 public class ToDoMode implements Mode {
     private static final String FILE_PATH = "data/todo_list.txt";
     public static final String PROMPT = "Welcome to To-Do Mode!\n" +
-            "Type literally ANYTHING to add it to your list\n" +
+            "Type ANYTHING to add it to your list\n" +
             "Type 'list' to view your tasks.\n" +
+            "Type 'mark [indices]' to mark tasks as done.\n" +
+            "Type 'unmark [indices]' to mark tasks as not done.\n" +
+            "Type 'modify [index] [new task]' to modify a task.\n" +
+            "Type 'delete [indices]' to remove tasks.\n" +
             "Type 'exit' to return to the Lobby.";
-    private List<String> tasks;
+
+    private static class Task {
+        String description;
+        boolean isCompleted;
+
+        Task(String description, boolean isCompleted) {
+            this.description = description;
+            this.isCompleted = isCompleted;
+        }
+    }
+
+    private final List<Task> tasks;
 
     public ToDoMode() {
         tasks = new ArrayList<>();
@@ -33,73 +49,143 @@ public class ToDoMode implements Mode {
 
         while (true) {
             String input = scanner.nextLine().trim();
+            String[] parts = input.split(" ", 2);
+            String command = parts[0].toLowerCase();
+            String arguments = parts.length > 1 ? parts[1].trim() : "";
 
-            if (input.equalsIgnoreCase("exit")) {
+            if (command.equals("exit")) {
                 OutputHandler.printInfo("Exiting ToDo Mode.");
                 break;
-            } else if (input.equalsIgnoreCase("list")) {
+            } else if (command.equals("list")) {
                 listTasks();
+            } else if (command.equals("mark")) {
+                markTasks(arguments);
+            } else if (command.equals("unmark")) {
+                unmarkTasks(arguments);
+            } else if (command.equals("modify")) {
+                modifyTask(arguments);
+            } else if (command.equals("delete")) {
+                deleteTasks(arguments);
             } else {
                 addTask(input);
             }
         }
     }
 
-    /**
-     * Adds a task and saves it to the file.
-     */
     private void addTask(String task) {
-        tasks.add(task);
-        saveTasks(); // Persist changes
+        tasks.add(new Task(task, false)); // Default to not done
+        saveTasks();
         OutputHandler.print("Added: " + task);
     }
 
-    /**
-     * Displays all tasks.
-     */
     private void listTasks() {
         if (tasks.isEmpty()) {
             OutputHandler.print("Your task list is empty.");
         } else {
-            StringBuilder listOutput = new StringBuilder();
+            String output = "Here are the tasks in your list:\n";
             for (int i = 0; i < tasks.size(); i++) {
-                listOutput.append((i + 1)).append(". ").append(tasks.get(i)).append("\n");
+                String status = tasks.get(i).isCompleted ? "[X]" : "[ ]";
+                output += (i + 1) + ". " + status + " " + tasks.get(i).description + "\n";
             }
-            OutputHandler.print(listOutput.toString());
+            OutputHandler.print(output);
         }
     }
 
-    /**
-     * Loads tasks from the file.
-     */
+    private void markTasks(String arguments) {
+        updateTaskStatus(arguments, true, "marked as done");
+    }
+
+    private void unmarkTasks(String arguments) {
+        updateTaskStatus(arguments, false, "marked as not done");
+    }
+
+    private void updateTaskStatus(String arguments, boolean status, String message) {
+        try {
+            String[] parts = arguments.split(" ");
+            List<Integer> indices = new ArrayList<>();
+            for (String part : parts) {
+                int index = Integer.parseInt(part) - 1;
+                if (index >= 0 && index < tasks.size()) {
+                    tasks.get(index).isCompleted = status;
+                    indices.add(index + 1);
+                }
+            }
+            if (!indices.isEmpty()) {
+                saveTasks();
+                OutputHandler.print("Successfully " + message + " tasks: " + indices);
+            } else {
+                OutputHandler.printError("Invalid task indices.");
+            }
+        } catch (Exception e) {
+            OutputHandler.printError("Usage: mark/unmark [task numbers]");
+        }
+    }
+
+    private void modifyTask(String arguments) {
+        try {
+            String[] parts = arguments.split(" ", 2);
+            int index = Integer.parseInt(parts[0]) - 1;
+            if (index >= 0 && index < tasks.size()) {
+                tasks.get(index).description = parts[1];
+                saveTasks();
+                OutputHandler.print("Task updated successfully.");
+            } else {
+                OutputHandler.printError("Invalid task index.");
+            }
+        } catch (Exception e) {
+            OutputHandler.printError("Usage: modify [task number] [new task description]");
+        }
+    }
+
+    private void deleteTasks(String arguments) {
+        try {
+            String[] parts = arguments.split(" ");
+            List<Integer> indices = new ArrayList<>();
+            for (String part : parts) {
+                int index = Integer.parseInt(part) - 1;
+                if (index >= 0 && index < tasks.size()) {
+                    indices.add(index);
+                }
+            }
+            if (!indices.isEmpty()) {
+                indices.sort(Collections.reverseOrder());
+                for (int index : indices) {
+                    tasks.remove(index);
+                }
+                saveTasks();
+                OutputHandler.print("Tasks deleted successfully.");
+            } else {
+                OutputHandler.printError("Invalid task indices.");
+            }
+        } catch (Exception e) {
+            OutputHandler.printError("Usage: delete [task numbers]");
+        }
+    }
+
     private void loadTasks() {
         File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            return; // No saved tasks
-        }
+        if (!file.exists()) return;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String task;
-            while ((task = reader.readLine()) != null) {
-                tasks.add(task);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                boolean isCompleted = line.startsWith("[X]");
+                String task = line.substring(4);
+                tasks.add(new Task(task, isCompleted));
             }
         } catch (IOException e) {
             OutputHandler.printError("Error loading tasks: " + e.getMessage());
         }
     }
 
-    /**
-     * Saves tasks to the file.
-     */
     private void saveTasks() {
         File directory = new File("data");
-        if (!directory.exists()) {
-            directory.mkdir(); // Create "data" folder if it doesn't exist
-        }
+        if (!directory.exists()) directory.mkdir();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (String task : tasks) {
-                writer.write(task);
+            for (Task task : tasks) {
+                String status = task.isCompleted ? "[X]" : "[ ]";
+                writer.write(status + " " + task.description);
                 writer.newLine();
             }
         } catch (IOException e) {

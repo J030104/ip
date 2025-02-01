@@ -12,14 +12,15 @@ public class OutputHandler {
 //                    + " |_____| \\___,| \\___,|  \\ __ / \n"
 //                    + "         |____/ |____/          \n";
 
-    private final static String logo = " _____                         \n" +
+    public final static String logo = " _____                         \n" +
             "| ____|   __ _    __ _    ___  \n" +
             "|  _|    / _` |  / _` |  / _ \\ \n" +
             "| |___  | (_| | | (_| | | (_) |\n" +
             "|_____|  \\__, |  \\__, |  \\___/ \n" +
             "         |___/   |___/         ";
 
-    public final static String LINE_SEPARATOR = "____________________________________________________________\n";
+    public final static String LINE_SEPARATOR = "_________________________________________________________________________\n";
+    public final static String INDENT = "    ";
 
     public static void greet() {
         final String intro = "Hello from\n" + logo;
@@ -31,24 +32,25 @@ public class OutputHandler {
     }
 
     public static void printInfo(String message) {
-        print("[INFO] " + message);
+        print(INDENT + "[INFO] " + message);
     }
 
     public static void printWarning(String message) {
-        print("[WARNING] " + message);
+        print(INDENT + "[WARNING] " + message);
     }
 
     public static void printError(String message) {
-        print("[ERROR] " + message);
+        print(INDENT + "[ERROR] " + message);
     }
 
-    public static void printPrompt(String prompt) {
-        print(prompt + " ");
-    }
+//    public static void printPrompt(String prompt) {
+//        print(prompt + " ");
+//    }
 
     public static void print(String response) {
+        String indentedResponse = INDENT + response.replace("\n", "\n" + INDENT);
         System.out.println(LINE_SEPARATOR
-                + response + "\n"
+                + indentedResponse + "\n"
                 + LINE_SEPARATOR);
     }
 }

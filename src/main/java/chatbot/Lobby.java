@@ -41,7 +41,7 @@ public class Lobby {
             input = InputHandler.processInput(input);
 
             if (input.equals("exit")) {
-                OutputHandler.print("Exiting chatbot Eggo. Goodbye!");
+                OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
                 break;
             } else if (input.equals("help")) {
 //                OutputHandler.printInfo(
