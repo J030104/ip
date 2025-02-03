@@ -2,6 +2,8 @@ package chatbot;
 
 import java.util.Scanner;
 
+//import Archive.Chatbot;
+
 /**
  * The main class for the chatbot application.
  * This class initializes the chatbot, handles user input, and starts the lobby.
@@ -15,7 +17,7 @@ public class Eggo {
      */
     public static void main(String[] args) {
         // Initialize chatbot instance
-        Chatbot chatbot = new Chatbot();
+//        Chatbot chatbot = new Chatbot();
 
         // Create a Scanner object to handle user input
         Scanner scanner = new Scanner(System.in);

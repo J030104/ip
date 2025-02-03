@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import chatbot.InputHandler;
-import chatbot.OutputHandler;
+import Archive.InputHandler;
 
 /**
  * The Lobby class manages different chatbot modes and provides a central interface.
@@ -28,7 +27,7 @@ public class Lobby {
     public Lobby() {
         modes = new HashMap<>();
         modes.put("echo", new EchoMode()); // Register Echo Mode
-        modes.put("todo", new ToDoMode()); // Register To-Do Mode
+        modes.put("task", new TaskMode()); // Register Task Mode
     }
 
     /**
