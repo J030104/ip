@@ -1,4 +1,4 @@
-package Archive;
+package chatbot;
 
 public class InputHandler {
     public static String processInput(String input) {

@@ -1,0 +1,39 @@
+***** ACTUAL.TXT
+    ========== Welcome to Task Mode! ==========
+
+    Type 'list' to view your tasks.
+***** EXPECTED.TXT
+    ========== Welcome to Task Mode! ==========
+
+    Type 'list' to view your tasks.
+*****
+
+***** ACTUAL.TXT
+    2. [D][ ] weekly CS2113 quiz Monday (by: 9pm)
+
+    Total: 2 task(s).
+***** EXPECTED.TXT
+    2. [D][ ] weekly CS2113 quiz Monday (by: 9pm)
+
+    Total: 2 task(s).
+*****
+
+***** ACTUAL.TXT
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+***** EXPECTED.TXT
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+*****
+
+***** ACTUAL.TXT
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+***** EXPECTED.TXT
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+*****

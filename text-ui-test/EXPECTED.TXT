@@ -1,15 +1,96 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
+_________________________________________________________________________
+    Hello from
+     _____
+    | ____|   __ _    __ _    ___
+    |  _|    / _` |  / _` |  / _ \
+    | |___  | (_| | | (_| | | (_) |  <-- Yep this is also an egg
+    |_____|  \__, |  \__, |  \___/
+             |___/   |___/
 
-Hello from
- _____
-| ____|   __ _    __ _    ___
-|  _|    / _` |  / _` |  / _ \
-| |___  | (_| | | (_| | | (_) |
-|_____|  \__, |  \__, |  \___/
-         |___/   |___/
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Howdy! I'm Eggo!
+    What can I do for you?
+_________________________________________________________________________
+
+_________________________________________________________________________
+    [INFO] Welcome to the Chatbot Lobby!
+    Type a mode name to enter a mode.
+
+    Available modes: task, echo
+    Type 'help' for assistance. (Currently Unavailable)
+_________________________________________________________________________
+
+_________________________________________________________________________
+    ========== Welcome to Task Mode! ==========
+
+    Type 'list' to view your tasks.
+    Type 'todo [description]' to add a to-do.
+    Type 'deadline [description] /by [time]' to add a deadline.
+    Type 'event [description] /from [start time] /to [end time]' to add an event.
+    Type 'mark [indices]' to mark tasks as done.
+    Type 'unmark [indices]' to mark tasks as not done.
+    Type 'rename [index] [new task name]' to rename a task).
+    Type 'delete [indices]' to remove tasks.
+    Type 'urg [indices]' to mark tasks as urgent.
+    Type 'noturg [indices]' to remove urgent mark.
+    Type 'imp [indices]' to mark tasks as important.
+    Type 'notimp [indices]' to remove important mark.
+    Type 'exit' to return to the Lobby.
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Added: <YI YU CHEN>: Answer CS2113 tutorial questions
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Added: weekly CS2113 quiz Monday (by: 9pm)
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Here are the tasks in your list:
+    1. [T][ ] <YI YU CHEN>: Answer CS2113 tutorial questions
+    2. [D][ ] weekly CS2113 quiz Monday (by: 9pm)
+
+    Total: 2 task(s).
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Added: CS2113 lecture (from: Friday 4 to: 6 pm)
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Here are the tasks in your list:
+    1. [T][ ] <YI YU CHEN>: Answer CS2113 tutorial questions
+    2. [D][ ] weekly CS2113 quiz Monday (by: 9pm)
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Successfully marked as done tasks: [1]
+_________________________________________________________________________
+
+_________________________________________________________________________
+    Here are the tasks in your list:
+    1. [T][X] <YI YU CHEN>: Answer CS2113 tutorial questions
+    2. [D][ ] weekly CS2113 quiz Monday (by: 9pm)
+    3. [E][ ] CS2113 lecture (from: Friday 4 to: 6 pm)
+
+    Total: 3 task(s).
+_________________________________________________________________________
+
+_________________________________________________________________________
+    [INFO] Exiting Task Mode.
+_________________________________________________________________________
+
+_________________________________________________________________________
+    [INFO] Returned to the Lobby.
+_________________________________________________________________________
+
+_________________________________________________________________________
+    [INFO] Exiting chatbot Eggo. Goodbye!
+_________________________________________________________________________
 

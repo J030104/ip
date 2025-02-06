@@ -19,7 +19,7 @@ public class OutputHandler {
 //                    + " |_____| \\___,| \\___,|  \\ __ / \n"
 //                    + "         |____/ |____/          \n";
 
-    public final static String logo = """
+    public static final String logo = """
              _____                         
             | ____|   __ _    __ _    ___  
             |  _|    / _` |  / _` |  / _ \\ 
@@ -28,8 +28,8 @@ public class OutputHandler {
                      |___/   |___/         
             """;
 
-    public final static String LINE_SEPARATOR = "_________________________________________________________________________\n";
-    public final static String INDENT = "    ";
+    public static final String LINE_SEPARATOR = "_________________________________________________________________________\n";
+    public static final String INDENT = "    ";
 
     public static void greet() {
         final String intro = "Hello from\n" + logo;

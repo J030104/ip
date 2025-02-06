@@ -1,0 +1,10 @@
+task
+todo <YI YU CHEN>: Answer CS2113 tutorial questions
+deadline weekly CS2113 quiz Monday /by 9pm
+list
+event CS2113 lecture /from Friday 4 /to 6 pm
+list
+mark 1
+list
+exit
+exit

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import Archive.InputHandler;
+import chatbot.InputHandler;
 
 /**
  * The Lobby class manages different chatbot modes and provides a central interface.
