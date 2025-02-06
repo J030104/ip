@@ -4,19 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import chatbot.InputHandler;
-
 /**
- * The Lobby class manages different chatbot modes and provides a central interface.
- * Users can select modes, exit the chatbot, or request help.
- *
- * Features:
- * - Registers available chatbot modes.
- * - Handles user input to switch modes.
- * - Provides user feedback and guidance.
- *
- * Usage:
- * Create an instance of `Lobby` and call `start(scanner)` to begin.
+ * Represents a chatbot lobby where users can interact with and switch between different modes.
+ * The lobby serves as the main entry point and management interface for available chatbot modes.
  */
 public class Lobby {
     private final Map<String, Mode> modes; // Stores available chatbot modes
@@ -30,6 +20,25 @@ public class Lobby {
         modes.put("task", new TaskMode()); // Register Task Mode
     }
 
+    
+    /**
+     * Features:
+     * - Predefined responses for common input cases.
+     * - Default response for unrecognized inputs.
+     */
+    public static class ResponseGenerator {
+        private static final Map<String, String> responseMap = new HashMap<>();
+
+        static {
+            responseMap.put("empty", "I didn't catch that. Could you try again?");
+            responseMap.put("hello", "Hi! How can I assist you today?");
+        }
+
+        public static Map<String, String> getResponseMap() {
+            return responseMap;
+        }
+    }
+    
     /**
      * Starts the chatbot lobby, allowing users to choose modes or exit.
      *
@@ -52,16 +61,13 @@ public class Lobby {
         OutputHandler.printInfo(welcome);
 
         while (true) {
-            String input = scanner.nextLine().trim().toLowerCase();
+            String input = scanner.nextLine().trim();
 
-            // Process input before handling commands
-            input = InputHandler.processInput(input);
-
-            if (input.equals("exit")) {
+            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("bye")) {
                 OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
                 break;
             }
-            else if (input.equals("help")) {
+            else if (input.equalsIgnoreCase("help")) {
                 // Placeholder for help system (unavailable for now)
                 OutputHandler.printInfo("Help is currently unavailable.");
             }
@@ -72,7 +78,13 @@ public class Lobby {
             }
             else {
                 // Handle invalid input
-                OutputHandler.printInfo("Unknown command. Type 'help' for available commands.");
+                Map<String, String> responseMap = ResponseGenerator.getResponseMap();
+                if (!responseMap.containsKey(input)) {
+                    input = "empty";
+                }
+                String response = responseMap.get(input);
+                OutputHandler.print(response);
+                OutputHandler.printInfo("Type 'help' for available commands.");
             }
         }
     }

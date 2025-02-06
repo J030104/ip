@@ -5,15 +5,8 @@ import java.util.Scanner;
 import chatbot.OutputHandler;
 
 /**
- * The EchoMode class allows users to enter a mode where the chatbot repeats
- * whatever the user types. This mode continues running until the user exits.
- *
- * Features:
+ * This class
  * - Repeats user input verbatim.
- * - Allows users to exit by typing "exit".
- *
- * Usage:
- * Call `start(scanner)` to begin echoing user input.
  */
 public class EchoMode implements Mode {
 
@@ -22,7 +15,7 @@ public class EchoMode implements Mode {
      */
     private static final String PROMPT = """
             You have entered Echo Mode! Type something, and I'll repeat it.
-            Press 'Ctrl + Q' (Currently Unavailable, type 'exit' instead) to return to the lobby.""";
+            Press 'Ctrl + Q' (Currently Unavailable, type 'exit' or 'bye' instead) to return to the lobby.""";
 
     /**
      * Starts Echo Mode and repeats user input until the user exits.

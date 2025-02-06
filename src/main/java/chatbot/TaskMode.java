@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * A mode that allows the user to add tasks, list them, modify, delete,
- * and mark them as done, urgent, or important.
+ * This class
+ * - Allows the user to add tasks, list them, rename and delete.
+ * - Allows the tasks to be marked as done. (urgent and important tags are currently Unavailable).
  */
 public class TaskMode implements Mode {
     private static final String FILE_PATH = "data/task_list.txt";
@@ -133,14 +134,8 @@ public class TaskMode implements Mode {
     }
 
     /**
-     * Adds a new task to the list.
+     * Adds a new Todo to the list.
      */
-//    private void addTask(String task) {
-//        tasks.add(new Task(task, false, false, false)); // Default to not done
-//        saveTasks();
-//        OutputHandler.print("Added: " + task);
-//    }
-
     private void addTodo(String description) {
         if (description.isEmpty()) {
             OutputHandler.printError("Usage: todo [description]");
@@ -151,6 +146,9 @@ public class TaskMode implements Mode {
         OutputHandler.print("Added: " + description);
     }
 
+    /**
+     * Adds a new Deadline to the list.
+     */
     private void addDeadline(String arguments) {
         String[] parts = arguments.split(" /by ", 2);
         if (parts.length < 2) {
@@ -162,6 +160,9 @@ public class TaskMode implements Mode {
         OutputHandler.print("Added: " + parts[0] + " (by: " + parts[1] + ")");
     }
 
+    /**
+     * Adds a new Event to the list.
+     */
     private void addEvent(String arguments) {
         String[] parts = arguments.split(" /from | /to ", 3);
         if (parts.length < 3) {
@@ -176,29 +177,17 @@ public class TaskMode implements Mode {
     /**
      * Lists all tasks with their statuses.
      */
-//    private void listTasks() {
-//        if (tasks.isEmpty()) {
-//            OutputHandler.print("Your task list is empty.");
-//            return;
-//        }
-//
-//        StringBuilder output = new StringBuilder("Here are the tasks in your list:\n");
-//        for (int i = 0; i < tasks.size(); i++) {
-//            String status = (tasks.get(i).isCompleted ? "[X]" : "[ ]") + (tasks.get(i).isUrgent ? "[U]" : "[ ]") + (tasks.get(i).isImportant ? "[I]" : "[ ]");
-//            output.append(i + 1).append(". ").append(status).append(" ").append(tasks.get(i).description).append("\n");
-//        }
-//        OutputHandler.print(output.toString());
-//    }
-
     private void listTasks() {
         if (tasks.isEmpty()) {
             OutputHandler.print("Your task list is empty.");
             return;
         }
+
         StringBuilder output = new StringBuilder("Here are the tasks in your list:\n");
         for (int i = 0; i < tasks.size(); i++) {
             output.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
+
         output.append("\n").append("Total: ").append(tasks.size()).append(" task(s).");
         OutputHandler.print(output.toString());
     }
@@ -214,9 +203,6 @@ public class TaskMode implements Mode {
         updateTaskStatus(arguments, false, "marked as not done");
     }
 
-    /**
-     * Marks tasks as completed or not.
-     */
     private void updateTaskStatus(String arguments, boolean status, String message) {
         try {
             String[] parts = arguments.split(" ");
@@ -228,6 +214,7 @@ public class TaskMode implements Mode {
                     indices.add(index + 1);
                 }
             }
+
             if (!indices.isEmpty()) {
 //                saveTasks();
                 OutputHandler.print("Successfully " + message + " tasks: " + indices);
@@ -280,6 +267,7 @@ public class TaskMode implements Mode {
                     indices.add(index + 1);
                 }
             }
+
             if (!indices.isEmpty()) {
 //                saveTasks();
                 OutputHandler.print("Successfully " + message + " tasks: " + indices);
@@ -325,6 +313,7 @@ public class TaskMode implements Mode {
                     indices.add(index);
                 }
             }
+
             if (!indices.isEmpty()) {
                 indices.sort(Collections.reverseOrder());
                 for (int index : indices) {
