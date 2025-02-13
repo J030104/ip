@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * This class
@@ -44,7 +46,7 @@ public class TaskMode implements Mode {
 
         Task(String description, boolean isCompleted, boolean isUrgent, boolean isImportant) {
             this.description = description;
-            this.isCompleted = false;
+            this.isCompleted = isCompleted;
             this.isUrgent = isUrgent;
             this.isImportant = isImportant;
         }
@@ -104,31 +106,36 @@ public class TaskMode implements Mode {
     public void start(Scanner scanner) {
         OutputHandler.print(PROMPT);
 
-        label:
+//        label:
         while (true) {
-            String input = scanner.nextLine().trim();
-            String[] parts = input.split(" ", 2); // To be examined
-            String command = parts[0].toLowerCase();
-            String arguments = parts.length > 1 ? parts[1].trim() : "";
+            try {
+                String input = scanner.nextLine().trim();
+                String[] parts = input.split(" ", 2); // To be examined
+                String command = parts[0].toLowerCase();
+                String arguments = parts.length > 1 ? parts[1].trim() : "";
 
-            switch (command) {
-            case "exit" -> {
-                OutputHandler.printInfo("Exiting Task Mode.");
-                break label;
-            }
-            case "todo" -> addTodo(arguments);
-            case "deadline" -> addDeadline(arguments);
-            case "event" -> addEvent(arguments);
-            case "list" -> listTasks();
-            case "mark" -> markTasks(arguments);
-            case "unmark" -> unmarkTasks(arguments);
-            case "rename" -> renameTask(arguments);
-            case "delete" -> deleteTasks(arguments);
-            case "urg" -> updateTaskUrgency(arguments, true, "marked as urgent");
-            case "noturg" -> updateTaskUrgency(arguments, false, "removed urgent mark");
-            case "imp" -> updateTaskImportance(arguments, true, "marked as important");
-            case "notimp" -> updateTaskImportance(arguments, false, "removed important mark");
-            default -> OutputHandler.printWarning("Unknown command: " + command);
+                switch (command) {
+                    case "exit" -> {
+                        OutputHandler.printInfo("Exiting Task Mode.");
+                        return;
+                        //                break label;
+                    }
+                    case "todo" -> addTodo(arguments);
+                    case "deadline" -> addDeadline(arguments);
+                    case "event" -> addEvent(arguments);
+                    case "list" -> listTasks();
+                    case "mark" -> markTasks(arguments);
+                    case "unmark" -> unmarkTasks(arguments);
+                    case "rename" -> renameTask(arguments);
+                    case "delete" -> deleteTasks(arguments);
+                    case "urg" -> updateTaskUrgency(arguments, true, "marked as urgent");
+                    case "noturg" -> updateTaskUrgency(arguments, false, "removed urgent mark");
+                    case "imp" -> updateTaskImportance(arguments, true, "marked as important");
+                    case "notimp" -> updateTaskImportance(arguments, false, "removed important mark");
+                    default -> OutputHandler.printWarning("Unknown command: " + command);
+                }
+            } catch (Exception e) {
+                OutputHandler.printError("Exception Caught.\n" + e.getMessage());
             }
         }
     }
@@ -136,10 +143,9 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Todo to the list.
      */
-    private void addTodo(String description) {
+    private void addTodo(String description) throws InvalidCommandException {
         if (description.isEmpty()) {
-            OutputHandler.printError("Usage: todo [description]");
-            return;
+            throw new InvalidCommandException("Usage: todo [description]");
         }
         tasks.add(new Todo(description));
 //        saveTasks();
@@ -149,11 +155,10 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Deadline to the list.
      */
-    private void addDeadline(String arguments) {
+    private void addDeadline(String arguments) throws InvalidCommandException {
         String[] parts = arguments.split(" /by ", 2);
         if (parts.length < 2) {
-            OutputHandler.printError("Usage: deadline [description] /by [time]");
-            return;
+            throw new InvalidCommandException("Usage: deadline [description] /by [time]");
         }
         tasks.add(new Deadline(parts[0], parts[1]));
 //        saveTasks();
@@ -163,11 +168,10 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Event to the list.
      */
-    private void addEvent(String arguments) {
+    private void addEvent(String arguments) throws InvalidCommandException {
         String[] parts = arguments.split(" /from | /to ", 3);
         if (parts.length < 3) {
-            OutputHandler.printError("Usage: event [description] /from [start time] /to [end time]");
-            return;
+            throw new InvalidCommandException("Usage: event [description] /from [start time] /to [end time]");
         }
         tasks.add(new Event(parts[0], parts[1], parts[2]));
 //        saveTasks();
@@ -195,138 +199,112 @@ public class TaskMode implements Mode {
     /**
      * Marks tasks as completed or not.
      */
-    private void markTasks(String arguments) {
-        updateTaskStatus(arguments, true, "marked as done");
+    private void markTasks(String arguments) throws InvalidCommandException {
+        updateTaskField(arguments, task -> { task.isCompleted = true; return null; }, "marked as done");
     }
 
-    private void unmarkTasks(String arguments) {
-        updateTaskStatus(arguments, false, "marked as not done");
-    }
-
-    private void updateTaskStatus(String arguments, boolean status, String message) {
-        try {
-            String[] parts = arguments.split(" ");
-            List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                int index = Integer.parseInt(part) - 1;
-                if (index >= 0 && index < tasks.size()) {
-                    tasks.get(index).isCompleted = status;
-                    indices.add(index + 1);
-                }
-            }
-
-            if (!indices.isEmpty()) {
-//                saveTasks();
-                OutputHandler.print("Successfully " + message + " tasks: " + indices);
-            }
-            else {
-                OutputHandler.printError("Invalid task indices.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: mark/unmark [task numbers]");
-        }
+    private void unmarkTasks(String arguments) throws InvalidCommandException {
+        updateTaskField(arguments, task -> { task.isCompleted = false; return null; }, "marked as not done");
     }
 
     /**
      * Updates task urgency status.
      */
-    private void updateTaskUrgency(String arguments, boolean status, String message) {
-        try {
-            String[] parts = arguments.split(" ");
-            List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                int index = Integer.parseInt(part) - 1;
-                if (index >= 0 && index < tasks.size()) {
-                    tasks.get(index).isUrgent = status;
-                    indices.add(index + 1);
-                }
-            }
-            if (!indices.isEmpty()) {
-//                saveTasks();
-                OutputHandler.print("Successfully " + message + " tasks: " + indices);
-            }
-            else {
-                OutputHandler.printError("Invalid task indices.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: urg/noturg [task numbers]");
-        }
+    private void updateTaskUrgency(String arguments, boolean status, String message) throws InvalidCommandException {
+        updateTaskField(arguments, task -> { task.isUrgent = status; return null; }, message);
     }
 
     /**
      * Updates task importance status.
      */
-    private void updateTaskImportance(String arguments, boolean status, String message) {
-        try {
-            String[] parts = arguments.split(" ");
-            List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                int index = Integer.parseInt(part) - 1;
-                if (index >= 0 && index < tasks.size()) {
-                    tasks.get(index).isImportant = status;
-                    indices.add(index + 1);
-                }
-            }
+    private void updateTaskImportance(String arguments, boolean status, String message) throws InvalidCommandException {
+        updateTaskField(arguments, task -> { task.isImportant = status; return null; }, message);
+    }
 
-            if (!indices.isEmpty()) {
-//                saveTasks();
-                OutputHandler.print("Successfully " + message + " tasks: " + indices);
-            }
-            else {
-                OutputHandler.printError("Invalid task indices.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: imp/notimp [task numbers]");
+    /**
+     * Updates a specified field of tasks based on indices provided in the arguments.
+     *
+     * @param arguments   The string containing space-separated task indices.
+     * @param fieldSetter A lambda function to update the task field.
+     * @param successMsg  The message to display on successful update.
+     */
+    private void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg) throws InvalidCommandException {
+        List<Integer> indices = parseTaskIndices(arguments);
+        if (indices.isEmpty()) {
+            OutputHandler.printError("Invalid task indices.");
+            return;
         }
+
+        for (int index : indices) {
+            fieldSetter.apply(tasks.get(index));
+        }
+
+        OutputHandler.print("Successfully " + successMsg + " tasks: " + indices);
     }
 
     /**
      * Modifies a task's description.
      */
-    private void renameTask(String arguments) {
+    private void renameTask(String arguments) throws InvalidCommandException{
         try {
             String[] parts = arguments.split(" ", 2);
+            if (parts.length < 2) {
+                throw new InvalidCommandException("Usage: rename [task number] [new description]");
+            }
+
             int index = Integer.parseInt(parts[0]) - 1;
-            if (index >= 0 && index < tasks.size()) {
-                tasks.get(index).description = parts[1];
-//                saveTasks();
-                OutputHandler.print("Task updated successfully.");
-            }
-            else {
-                OutputHandler.printError("Invalid task index.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: modify [task number] [new task description]");
+            validateIndex(index);
+
+            tasks.get(index).description = parts[1];
+            OutputHandler.print("Task updated successfully.");
+        } catch (NumberFormatException e) {
+            throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
         }
     }
 
     /**
      * Deletes tasks by index.
      */
-    private void deleteTasks(String arguments) {
+    private void deleteTasks(String arguments) throws InvalidCommandException {
+        List<Integer> indices = parseTaskIndices(arguments);
+        if (indices.isEmpty()) {
+            OutputHandler.printError("Invalid task indices.");
+            return;
+        }
+
+        // Reverse sort ensures we delete from the back to avoid shifting issues
+        indices.sort(Collections.reverseOrder());
+        for (int index : indices) {
+            tasks.remove(index);
+        }
+
+        OutputHandler.print("Tasks deleted successfully.");
+    }
+
+    /**
+     * Parses space-separated task indices and validates them.
+     */
+    private List<Integer> parseTaskIndices(String arguments) throws InvalidCommandException {
+        List<Integer> indices = new ArrayList<>();
         try {
             String[] parts = arguments.split(" ");
-            List<Integer> indices = new ArrayList<>();
             for (String part : parts) {
                 int index = Integer.parseInt(part) - 1;
-                if (index >= 0 && index < tasks.size()) {
-                    indices.add(index);
-                }
+                validateIndex(index);
+                indices.add(index);
             }
+        } catch (NumberFormatException e) {
+            throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
+        }
+        return indices;
+    }
 
-            if (!indices.isEmpty()) {
-                indices.sort(Collections.reverseOrder());
-                for (int index : indices) {
-                    tasks.remove(index);
-                }
-//                saveTasks();
-                OutputHandler.print("Tasks deleted successfully.");
-            }
-            else {
-                OutputHandler.printError("Invalid task indices.");
-            }
-        } catch (Exception e) {
-            OutputHandler.printError("Usage: delete [task numbers]");
+    /**
+     * Validates that a task index is within bounds.
+     */
+    private void validateIndex(int index) throws InvalidCommandException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new InvalidCommandException("Task number out of range.");
         }
     }
 

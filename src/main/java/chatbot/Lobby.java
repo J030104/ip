@@ -30,7 +30,7 @@ public class Lobby {
         private static final Map<String, String> responseMap = new HashMap<>();
 
         static {
-            responseMap.put("empty", "I didn't catch that. Could you try again?");
+//            responseMap.put("empty", "I didn't catch that. Could you try again?");
             responseMap.put("hello", "Hi! How can I assist you today?");
         }
 
@@ -61,31 +61,37 @@ public class Lobby {
         OutputHandler.printInfo(welcome);
 
         while (true) {
-            String input = scanner.nextLine().trim();
+            try {
+                String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("bye")) {
-                OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
-                break;
-            }
-            else if (input.equalsIgnoreCase("help")) {
-                // Placeholder for help system (unavailable for now)
-                OutputHandler.printInfo("Help is currently unavailable.");
-            }
-            else if (modes.containsKey(input)) {
-                // Switch to the selected mode
-                modes.get(input).start(scanner);
-                OutputHandler.printInfo("Returned to the Lobby.");
-            }
-            else {
-                // Handle invalid input
-                Map<String, String> responseMap = ResponseGenerator.getResponseMap();
-                if (!responseMap.containsKey(input)) {
-                    input = "empty";
+                if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("bye")) {
+                    OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
+                    break;
+                } else if (input.equalsIgnoreCase("help")) {
+                    // Placeholder for help system (unavailable for now)
+                    OutputHandler.printInfo("Help is currently unavailable.");
+                } else if (modes.containsKey(input)) {
+                    // Switch to the selected mode
+                    modes.get(input).start(scanner);
+                    OutputHandler.printInfo("Returned to the Lobby.");
+                } else {
+                    // Handle invalid input
+                    Map<String, String> responseMap = ResponseGenerator.getResponseMap();
+                    resolveInputResponse(input, responseMap);
                 }
-                String response = responseMap.get(input);
-                OutputHandler.print(response);
-                OutputHandler.printInfo("Type 'help' for available commands.");
+            } catch (Exception e) {
+
             }
         }
+    }
+
+    public void resolveInputResponse(String input, Map<String, String> responseMap) throws EggoCommandException {
+        if (!responseMap.containsKey(input)) {
+//            input = "empty";
+            throw new EggoCommandException();
+        }
+
+        String response = responseMap.get(input);
+        OutputHandler.print(response);
     }
 }

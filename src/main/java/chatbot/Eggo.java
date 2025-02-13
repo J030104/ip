@@ -2,8 +2,6 @@ package chatbot;
 
 import java.util.Scanner;
 
-//import Archive.Chatbot;
-
 /**
  * The main class for the chatbot application.
  * This class initializes the chatbot, handles user input, and starts the lobby.
