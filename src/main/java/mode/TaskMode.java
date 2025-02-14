@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import eggo.OutputHandler;
 import exception.InvalidCommandException;
+import exception.InvalidTaskFormatException;
 
 /**
  * This class
@@ -138,9 +139,9 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Todo to the list.
      */
-    private void addTodo(String description) throws InvalidCommandException {
+    private void addTodo(String description) throws InvalidTaskFormatException {
         if (description.isEmpty()) {
-            throw new InvalidCommandException("Usage: todo [description]");
+            throw new InvalidTaskFormatException("Usage: todo [description]");
         }
         tasks.add(new Todo(description));
 //        saveTasks();
@@ -150,10 +151,10 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Deadline to the list.
      */
-    private void addDeadline(String arguments) throws InvalidCommandException {
+    private void addDeadline(String arguments) throws InvalidTaskFormatException {
         String[] parts = arguments.split(" /by ", 2);
         if (parts.length < 2) {
-            throw new InvalidCommandException("Usage: deadline [description] /by [time]");
+            throw new InvalidTaskFormatException("Usage: deadline [description] /by [time]");
         }
         tasks.add(new Deadline(parts[0], parts[1]));
 //        saveTasks();
@@ -163,10 +164,10 @@ public class TaskMode implements Mode {
     /**
      * Adds a new Event to the list.
      */
-    private void addEvent(String arguments) throws InvalidCommandException {
+    private void addEvent(String arguments) throws InvalidTaskFormatException {
         String[] parts = arguments.split(" /from | /to ", 3);
         if (parts.length < 3) {
-            throw new InvalidCommandException("Usage: event [description] /from [start time] /to [end time]");
+            throw new InvalidTaskFormatException("Usage: event [description] /from [start time] /to [end time]");
         }
         tasks.add(new Event(parts[0], parts[1], parts[2]));
 //        saveTasks();
@@ -236,11 +237,11 @@ public class TaskMode implements Mode {
     /**
      * Modifies a task's description.
      */
-    private void renameTask(String arguments) throws InvalidCommandException{
+    private void renameTask(String arguments) throws InvalidTaskFormatException {
         try {
             String[] parts = arguments.split(" ", 2);
             if (parts.length < 2) {
-                throw new InvalidCommandException("Usage: rename [task number] [new description]");
+                throw new InvalidTaskFormatException("Usage: rename [task number] [new description]");
             }
 
             int index = Integer.parseInt(parts[0]) - 1;
