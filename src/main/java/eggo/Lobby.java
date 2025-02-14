@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import exception.EggoCommandException;
+import mode.TaskMode;
+import mode.EchoMode;
 
 /**
  * Represents a eggo lobby where users can interact with and switch between different modes.
