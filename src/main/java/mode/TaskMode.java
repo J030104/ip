@@ -9,6 +9,7 @@ import java.util.function.Function;
 import eggo.OutputHandler;
 import exception.InvalidCommandException;
 import exception.InvalidTaskFormatException;
+import exception.TaskNotFoundException;
 
 /**
  * This class
@@ -120,18 +121,18 @@ public class TaskMode implements Mode {
                     case "deadline" -> addDeadline(arguments);
                     case "event" -> addEvent(arguments);
                     case "list" -> listTasks();
-                    case "mark" -> markTasks(arguments);
-                    case "unmark" -> unmarkTasks(arguments);
-                    case "rename" -> renameTask(arguments);
-                    case "delete" -> deleteTasks(arguments);
+                    case "mark" -> updateTasksDone(arguments, true);
+                    case "unmark" -> updateTasksDone(arguments, false);
                     case "urg" -> updateTaskUrgency(arguments, true, "marked as urgent");
                     case "noturg" -> updateTaskUrgency(arguments, false, "removed urgent mark");
                     case "imp" -> updateTaskImportance(arguments, true, "marked as important");
                     case "notimp" -> updateTaskImportance(arguments, false, "removed important mark");
+                    case "rename" -> renameTask(arguments);
+                    case "delete" -> deleteTasks(arguments);
                     default -> OutputHandler.printWarning("Unknown command: " + command);
                 }
             } catch (Exception e) {
-                OutputHandler.printError("Exception Caught:\n" + e.getMessage());
+                OutputHandler.printError("Exception Caught: " + e.getClass() + "\n" + e.getMessage());
             }
         }
     }
@@ -195,25 +196,21 @@ public class TaskMode implements Mode {
     /**
      * Marks tasks as completed or not.
      */
-    private void markTasks(String arguments) throws InvalidCommandException {
-        updateTaskField(arguments, task -> { task.isCompleted = true; return null; }, "marked as done");
-    }
-
-    private void unmarkTasks(String arguments) throws InvalidCommandException {
-        updateTaskField(arguments, task -> { task.isCompleted = false; return null; }, "marked as not done");
+    private void updateTasksDone(String arguments, boolean status) throws TaskNotFoundException, InvalidCommandException {
+        updateTaskField(arguments, task -> { task.isCompleted = status; return null; }, "marked as done");
     }
 
     /**
      * Updates task urgency status.
      */
-    private void updateTaskUrgency(String arguments, boolean status, String message) throws InvalidCommandException {
+    private void updateTaskUrgency(String arguments, boolean status, String message) throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isUrgent = status; return null; }, message);
     }
 
     /**
      * Updates task importance status.
      */
-    private void updateTaskImportance(String arguments, boolean status, String message) throws InvalidCommandException {
+    private void updateTaskImportance(String arguments, boolean status, String message) throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isImportant = status; return null; }, message);
     }
 
@@ -224,7 +221,7 @@ public class TaskMode implements Mode {
      * @param fieldSetter A lambda function to update the task field.
      * @param successMsg  The message to display on successful update.
      */
-    private void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg) throws InvalidCommandException {
+    private void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg) throws TaskNotFoundException, InvalidCommandException {
         List<Integer> indices = parseTaskIndices(arguments);
 
         for (int index : indices) {
@@ -237,7 +234,7 @@ public class TaskMode implements Mode {
     /**
      * Modifies a task's description.
      */
-    private void renameTask(String arguments) throws InvalidTaskFormatException {
+    private void renameTask(String arguments) throws InvalidTaskFormatException, TaskNotFoundException, InvalidCommandException {
         try {
             String[] parts = arguments.split(" ", 2);
             if (parts.length < 2) {
@@ -273,7 +270,7 @@ public class TaskMode implements Mode {
     /**
      * Parses space-separated task indices and validates them.
      */
-    private List<Integer> parseTaskIndices(String arguments) throws InvalidCommandException {
+    private List<Integer> parseTaskIndices(String arguments) throws TaskNotFoundException, InvalidCommandException {
         // Have to take care of the delimiter issue here
         List<Integer> indices = new ArrayList<>();
         try {
@@ -292,9 +289,9 @@ public class TaskMode implements Mode {
     /**
      * Validates that a task index is within bounds.
      */
-    private void validateIndex(int index) throws InvalidCommandException {
+    private void validateIndex(int index) throws TaskNotFoundException {
         if (index < 0 || index >= tasks.size()) {
-            throw new InvalidCommandException("Task number out of range.");
+            throw new TaskNotFoundException("Task number out of range.");
         }
     }
 
