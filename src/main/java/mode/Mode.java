@@ -1,4 +1,4 @@
-package chatbot;
+package mode;
 
 import java.util.Scanner;
 

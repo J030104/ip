@@ -1,18 +1,20 @@
-package chatbot;
+package eggo;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import exception.EggoCommandException;
+
 /**
- * Represents a chatbot lobby where users can interact with and switch between different modes.
- * The lobby serves as the main entry point and management interface for available chatbot modes.
+ * Represents a eggo lobby where users can interact with and switch between different modes.
+ * The lobby serves as the main entry point and management interface for available eggo modes.
  */
 public class Lobby {
-    private final Map<String, Mode> modes; // Stores available chatbot modes
+    private final Map<String, mode.Mode> modes; // Stores available eggo modes
 
     /**
-     * Initializes the chatbot lobby with different modes.
+     * Initializes the eggo lobby with different modes.
      */
     public Lobby() {
         modes = new HashMap<>();
@@ -40,7 +42,7 @@ public class Lobby {
     }
     
     /**
-     * Starts the chatbot lobby, allowing users to choose modes or exit.
+     * Starts the eggo lobby, allowing users to choose modes or exit.
      *
      * @param scanner Scanner object to read user input.
      */

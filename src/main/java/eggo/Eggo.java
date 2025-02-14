@@ -1,4 +1,4 @@
-package chatbot;
+package eggo;
 
 import java.util.Scanner;
 

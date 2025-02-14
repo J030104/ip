@@ -1,6 +1,4 @@
-package chatbot;
-
-import java.util.Map;
+package eggo;
 
 public interface HelpSystem {
 //    private static final Map<String, String> helpMessages = Map.of(

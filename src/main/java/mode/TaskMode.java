@@ -1,18 +1,13 @@
-package chatbot;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+package mode;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
-import java.util.function.Consumer;
+
+import eggo.OutputHandler;
+import exception.InvalidCommandException;
 
 /**
  * This class
@@ -265,6 +260,7 @@ public class TaskMode implements Mode {
         List<Integer> indices = parseTaskIndices(arguments);
 
         // Reverse sort ensures we delete from the back to avoid shifting issues
+
         indices.sort(Collections.reverseOrder());
         for (int index : indices) {
             tasks.remove(index);

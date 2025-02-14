@@ -1,8 +1,8 @@
-package chatbot;
+package mode;
 
 import java.util.Scanner;
 
-import chatbot.OutputHandler;
+import eggo.OutputHandler;
 
 /**
  * This class

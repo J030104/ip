@@ -1,4 +1,4 @@
-package chatbot;
+package eggo;
 
 public class InputHandler {
     public static String processInput(String input) {

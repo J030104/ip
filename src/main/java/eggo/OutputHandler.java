@@ -1,4 +1,4 @@
-package chatbot;
+package eggo;
 
 /**
  * Handles all chatbot outputs to the user, ensuring proper formatting and readability.

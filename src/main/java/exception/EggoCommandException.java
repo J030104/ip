@@ -1,6 +1,6 @@
-package chatbot;
+package exception;
 
-import chatbot.OutputHandler;
+import eggo.OutputHandler;
 
 public class EggoCommandException extends Exception {
     public EggoCommandException() {
