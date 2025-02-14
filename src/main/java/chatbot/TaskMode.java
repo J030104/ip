@@ -118,7 +118,7 @@ public class TaskMode implements Mode {
                     case "exit" -> {
                         OutputHandler.printInfo("Exiting Task Mode.");
                         return;
-                        //                break label;
+//                        break label;
                     }
                     case "todo" -> addTodo(arguments);
                     case "deadline" -> addDeadline(arguments);
@@ -135,7 +135,7 @@ public class TaskMode implements Mode {
                     default -> OutputHandler.printWarning("Unknown command: " + command);
                 }
             } catch (Exception e) {
-                OutputHandler.printError("Exception Caught.\n" + e.getMessage());
+                OutputHandler.printError("Exception Caught:\n" + e.getMessage());
             }
         }
     }
@@ -230,16 +230,12 @@ public class TaskMode implements Mode {
      */
     private void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg) throws InvalidCommandException {
         List<Integer> indices = parseTaskIndices(arguments);
-        if (indices.isEmpty()) {
-            OutputHandler.printError("Invalid task indices.");
-            return;
-        }
 
         for (int index : indices) {
             fieldSetter.apply(tasks.get(index));
         }
 
-        OutputHandler.print("Successfully " + successMsg + " tasks: " + indices);
+        OutputHandler.print("Successfully " + successMsg + " tasks: " + arguments + ".");
     }
 
     /**
@@ -267,10 +263,6 @@ public class TaskMode implements Mode {
      */
     private void deleteTasks(String arguments) throws InvalidCommandException {
         List<Integer> indices = parseTaskIndices(arguments);
-        if (indices.isEmpty()) {
-            OutputHandler.printError("Invalid task indices.");
-            return;
-        }
 
         // Reverse sort ensures we delete from the back to avoid shifting issues
         indices.sort(Collections.reverseOrder());
@@ -285,6 +277,7 @@ public class TaskMode implements Mode {
      * Parses space-separated task indices and validates them.
      */
     private List<Integer> parseTaskIndices(String arguments) throws InvalidCommandException {
+        // Have to take care of the delimiter issue here
         List<Integer> indices = new ArrayList<>();
         try {
             String[] parts = arguments.split(" ");
@@ -331,9 +324,9 @@ public class TaskMode implements Mode {
 //        }
 //    }
 //
-//    /**
-//     * Saves tasks to a file.
-//     */
+    /**
+     * Saves tasks to a file.
+     */
 //    private void saveTasks() {
 //        File directory = new File("data");
 //        if (!directory.exists()) {
