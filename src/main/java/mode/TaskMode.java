@@ -48,6 +48,10 @@ public class TaskMode implements Mode {
             this.isImportant = isImportant;
         }
 
+        public String getDescription() {
+            return description;
+        }
+
         public abstract String toString();
     }
 
@@ -255,13 +259,28 @@ public class TaskMode implements Mode {
      * Deletes tasks by index.
      */
     private void deleteTasks(String arguments) throws InvalidCommandException {
-        List<Integer> indices = parseTaskIndices(arguments);
-
-        // Reverse sort ensures we delete from the back to avoid shifting issues
-
-        indices.sort(Collections.reverseOrder());
-        for (int index : indices) {
-            tasks.remove(index);
+        try {
+            List<Integer> indices = new ArrayList<>();
+            indices = parseTaskIndices(arguments);
+            // Reverse sort ensures we delete from the back to avoid shifting issues
+            indices.sort(Collections.reverseOrder());
+            for (int index : indices) {
+                tasks.remove(index);
+            }
+        } catch (InvalidCommandException | TaskNotFoundException e) {
+            // If parsing fails, assume arguments is a task description
+            Task taskToRemove = null;
+            for (Task task : tasks) {
+                if (task.getDescription().equals(arguments)) {
+                    taskToRemove = task;
+                    break; // Only remove one matching task
+                }
+            }
+            if (taskToRemove != null) {
+                tasks.remove(taskToRemove);
+            } else {
+                throw new InvalidCommandException("Task not found: " + arguments);
+            }
         }
 
         OutputHandler.print("Tasks deleted successfully.");
@@ -281,8 +300,9 @@ public class TaskMode implements Mode {
                 indices.add(index);
             }
         } catch (NumberFormatException e) {
-            throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
+            throw new InvalidCommandException("Invalid number format. Proceeding to search task item...", e);
         }
+
         return indices;
     }
 
