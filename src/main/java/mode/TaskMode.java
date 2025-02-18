@@ -7,9 +7,12 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 import eggo.OutputHandler;
+import eggo.Helper;
+
 import exception.InvalidCommandException;
 import exception.InvalidTaskFormatException;
 import exception.TaskNotFoundException;
+
 
 /**
  * This class
@@ -18,9 +21,9 @@ import exception.TaskNotFoundException;
  */
 public class TaskMode implements Mode {
     private static final String FILE_PATH = "data/task_list.txt";
+    public static final String WELCOME_MESSAGE = """
+            ========== Welcome to Task Mode! ==========\n\n""";
     public static final String PROMPT = """
-            ========== Welcome to Task Mode! ==========
-            
             Type 'list' to view your tasks.
             Type 'todo [description]' to add a to-do.
             Type 'deadline [description] /by [time]' to add a deadline.
@@ -33,6 +36,7 @@ public class TaskMode implements Mode {
             Type 'noturg [indices]' to remove urgent mark.
             Type 'imp [indices]' to mark tasks as important.
             Type 'notimp [indices]' to remove important mark.
+            Type 'help' to view the help menu.
             Type 'exit' to return to the Lobby.""";
 
     private abstract static class Task {
@@ -105,7 +109,7 @@ public class TaskMode implements Mode {
 
     @Override
     public void start(Scanner scanner) {
-        OutputHandler.print(PROMPT);
+        OutputHandler.print(WELCOME_MESSAGE + PROMPT);
 
 //        label:
         while (true) {
@@ -133,11 +137,21 @@ public class TaskMode implements Mode {
                     case "notimp" -> updateTaskImportance(arguments, false, "removed important mark");
                     case "rename" -> renameTask(arguments);
                     case "delete" -> deleteTasks(arguments);
+                    case "help" -> HelpHandler.help();
                     default -> OutputHandler.printWarning("Unknown command: " + command);
                 }
             } catch (Exception e) {
                 OutputHandler.printError("Exception Caught: " + e.getClass() + "\n" + e.getMessage());
             }
+        }
+    }
+
+
+    private static class HelpHandler implements Helper {
+        public static final String DELETE_DETAIL = "\n\n\"delete\" [description] can only remove one task at a time.";
+
+        public static void help() {
+            OutputHandler.print(PROMPT + DELETE_DETAIL);
         }
     }
 
@@ -273,7 +287,7 @@ public class TaskMode implements Mode {
             for (Task task : tasks) {
                 if (task.getDescription().equals(arguments)) {
                     taskToRemove = task;
-                    break; // Only remove one matching task
+                    break; // Only remove one matching task --> Should be documented in the help system
                 }
             }
             if (taskToRemove != null) {
