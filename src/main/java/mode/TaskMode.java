@@ -1,5 +1,12 @@
 package mode;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +48,7 @@ public class TaskMode implements Mode {
         protected boolean isUrgent;
         protected boolean isImportant;
 
-        Task(String description, boolean isCompleted, boolean isUrgent, boolean isImportant) {
+        public Task(String description, boolean isCompleted, boolean isUrgent, boolean isImportant) {
             this.description = description;
             this.isCompleted = isCompleted;
             this.isUrgent = isUrgent;
@@ -56,9 +63,13 @@ public class TaskMode implements Mode {
             super(description, false, false, false);
         }
 
+        public Todo(String description, boolean isCompleted, boolean isUrgent, boolean isImportant) {
+            super(description, isCompleted, isUrgent, isImportant);
+        }
+
         @Override
         public String toString() {
-            return "[T][" + (isCompleted ? "X" : " ") + "] " + description;
+            return "[T][" + (isCompleted ? "X" : " ") + "][" + (isUrgent ? "!" : " ") + "][" + (isImportant ? "I" : " ") + "] " + description;
         }
     }
 
@@ -70,9 +81,14 @@ public class TaskMode implements Mode {
             this.by = by;
         }
 
+        public Deadline(String description, boolean isCompleted, boolean isUrgent, boolean isImportant, String by) {
+            super(description, isCompleted, isUrgent, isImportant);
+            this.by = by;
+        }
+
         @Override
         public String toString() {
-            return "[D][" + (isCompleted ? "X" : " ") + "] " + description + " (by: " + by + ")";
+            return "[D][" + (isCompleted ? "X" : " ") + "][" + (isUrgent ? "!" : " ") + "][" + (isImportant ? "I" : " ") + "] " + description + " (by: " + by + ")";
         }
     }
 
@@ -86,9 +102,15 @@ public class TaskMode implements Mode {
             this.to = to;
         }
 
+        public Event(String description, boolean isCompleted, boolean isUrgent, boolean isImportant, String from, String to) {
+            super(description, isCompleted, isUrgent, isImportant);
+            this.from = from;
+            this.to = to;
+        }
+
         @Override
         public String toString() {
-            return "[E][" + (isCompleted ? "X" : " ") + "] " + description + " (from: " + from + " to: " + to + ")";
+            return "[E]["+ (isCompleted ? "X" : " ") + "][" + (isUrgent ? "!" : " ") + "][" + (isImportant ? "I" : " ") + "] " + description + " (from: " + from + " to: " + to + ")";
         }
     }
 
@@ -96,7 +118,7 @@ public class TaskMode implements Mode {
 
     public TaskMode() {
         tasks = new ArrayList<>();
-//        loadTasks(); // Load existing tasks from file
+        loadTasks(); // Load existing tasks from file
     }
 
     @Override
@@ -145,7 +167,7 @@ public class TaskMode implements Mode {
             throw new InvalidTaskFormatException("Usage: todo [description]");
         }
         tasks.add(new Todo(description));
-//        saveTasks();
+        saveTasks();
         OutputHandler.print("Added: " + description);
     }
 
@@ -158,7 +180,7 @@ public class TaskMode implements Mode {
             throw new InvalidTaskFormatException("Usage: deadline [description] /by [time]");
         }
         tasks.add(new Deadline(parts[0], parts[1]));
-//        saveTasks();
+        saveTasks();
         OutputHandler.print("Added: " + parts[0] + " (by: " + parts[1] + ")");
     }
 
@@ -171,7 +193,7 @@ public class TaskMode implements Mode {
             throw new InvalidTaskFormatException("Usage: event [description] /from [start time] /to [end time]");
         }
         tasks.add(new Event(parts[0], parts[1], parts[2]));
-//        saveTasks();
+        saveTasks();
         OutputHandler.print("Added: " + parts[0] + " (from: " + parts[1] + " to: " + parts[2] + ")");
     }
 
@@ -229,6 +251,7 @@ public class TaskMode implements Mode {
         }
 
         OutputHandler.print("Successfully " + successMsg + " tasks: " + arguments + ".");
+        saveTasks();
     }
 
     /**
@@ -245,6 +268,7 @@ public class TaskMode implements Mode {
             validateIndex(index);
 
             tasks.get(index).description = parts[1];
+            saveTasks();
             OutputHandler.print("Task updated successfully.");
         } catch (NumberFormatException e) {
             throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
@@ -264,6 +288,7 @@ public class TaskMode implements Mode {
             tasks.remove(index);
         }
 
+        saveTasks();
         OutputHandler.print("Tasks deleted successfully.");
     }
 
@@ -296,48 +321,95 @@ public class TaskMode implements Mode {
     }
 
     /**
+     * Saves tasks to a file in a structured format.
+     */
+    private void saveTasks() {
+        File directory = new File("data");
+        if (!directory.exists() && !directory.mkdir()) {
+            OutputHandler.printError("Failed to create directory: " + directory.getAbsolutePath());
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Task task : tasks) {
+                StringBuilder line = new StringBuilder();
+
+                // Task type
+                if (task instanceof Todo) {
+                    line.append("T|");
+                } else if (task instanceof Deadline) {
+                    line.append("D|");
+                } else if (task instanceof Event) {
+                    line.append("E|");
+                }
+
+                // Task properties
+                line.append(task.isCompleted ? "1|" : "0|")
+                        .append(task.isUrgent ? "1|" : "0|")
+                        .append(task.isImportant ? "1|" : "0|")
+                        .append(task.description).append("|");
+
+                // Additional fields for Deadlines and Events
+                if (task instanceof Deadline deadline) {
+                    line.append(deadline.by);
+                } else if (task instanceof Event event) {
+                    line.append(event.from).append("|").append(event.to);
+                }
+
+                writer.write(line.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            OutputHandler.printError("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    /**
      * Loads tasks from a file.
      */
-//    private void loadTasks() {
-//        File file = new File(FILE_PATH);
-//        if (!file.exists()) {
-//            return;
-//        }
-//
-//        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                boolean isCompleted = line.startsWith("[X]");
-//                boolean isUrgent = line.contains("[U]");
-//                boolean isImportant = line.contains("[I]");
-//                String task = line.replace("[X]", "").replace("[U]", "").replace("[I]", "").trim();
-//                tasks.add(new Task(task, isCompleted, isUrgent, isImportant));
-//            }
-//        } catch (IOException e) {
-//            OutputHandler.printError("Error loading tasks: " + e.getMessage());
-//        }
-//    }
-//
-    /**
-     * Saves tasks to a file.
-     */
-//    private void saveTasks() {
-//        File directory = new File("data");
-//        if (!directory.exists()) {
-//            if (!directory.mkdir()) {
-//                OutputHandler.printError("Failed to create directory: " + directory.getAbsolutePath());
-//                return;
-//            }
-//        }
-//
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-//            for (Task task : tasks) {
-//                String status = (task.isCompleted ? "[X]" : "[ ]") + (task.isUrgent ? "[U]" : "[ ]") + (task.isImportant ? "[I]" : "[ ]");
-//                writer.write(status + " " + task.description);
-//                writer.newLine();
-//            }
-//        } catch (IOException e) {
-//            OutputHandler.printError("Error saving tasks: " + e.getMessage());
-//        }
-//    }
+    private void loadTasks() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            return; // No file, no tasks to load
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\|"); // To correctly escape the pipe
+
+                if (parts.length < 5) {
+                    OutputHandler.printWarning("Skipping corrupted task entry: " + line);
+                    continue; // Skip invalid lines
+                }
+
+                String type = parts[0];
+                boolean isCompleted = parts[1].equals("1");
+                boolean isUrgent = parts[2].equals("1");
+                boolean isImportant = parts[3].equals("1");
+                String description = parts[4];
+
+                switch (type) {
+                case "T" -> tasks.add(new Todo(description, isCompleted, isUrgent, isImportant));
+                case "D" -> {
+                    if (parts.length < 6) {
+                        OutputHandler.printWarning("Skipping malformed deadline: " + line);
+                        continue;
+                    }
+                    tasks.add(new Deadline(description, isCompleted, isUrgent, isImportant, parts[5]));
+                }
+                case "E" -> {
+                    if (parts.length < 7) {
+                        OutputHandler.printWarning("Skipping malformed event: " + line);
+                        continue;
+                    }
+                    tasks.add(new Event(description, isCompleted, isUrgent, isImportant, parts[5], parts[6]));
+                }
+                default -> OutputHandler.printWarning("Unknown task type in file: " + line);
+                }
+            }
+        } catch (IOException e) {
+            OutputHandler.printError("Error loading tasks: " + e.getMessage());
+        }
+    }
 }
