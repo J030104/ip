@@ -16,6 +16,7 @@ import java.util.function.Function;
 import eggo.OutputHandler;
 
 import exception.CorruptedTaskEntryException;
+import exception.DirectoryCreationException;
 import exception.InvalidCommandException;
 import exception.InvalidTaskFormatException;
 import exception.TaskNotFoundException;
