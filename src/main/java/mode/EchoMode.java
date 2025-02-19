@@ -24,7 +24,7 @@ public class EchoMode implements Mode {
      */
     @Override
     public void start(Scanner scanner) {
-        OutputHandler.print(PROMPT);
+        OutputHandler.printInfo(PROMPT);
 
         while (true) {
             String input = scanner.nextLine();

@@ -14,6 +14,8 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 import eggo.OutputHandler;
+
+import exception.CorruptedTaskEntryException;
 import exception.InvalidCommandException;
 import exception.InvalidTaskFormatException;
 import exception.TaskNotFoundException;
@@ -123,7 +125,7 @@ public class TaskMode implements Mode {
 
     @Override
     public void start(Scanner scanner) {
-        OutputHandler.print(PROMPT);
+        OutputHandler.printInfo(PROMPT);
 
 //        label:
         while (true) {
@@ -168,7 +170,7 @@ public class TaskMode implements Mode {
         }
         tasks.add(new Todo(description));
         saveTasks();
-        OutputHandler.print("Added: " + description);
+        OutputHandler.printInfo("Added: " + description);
     }
 
     /**
@@ -181,7 +183,7 @@ public class TaskMode implements Mode {
         }
         tasks.add(new Deadline(parts[0], parts[1]));
         saveTasks();
-        OutputHandler.print("Added: " + parts[0] + " (by: " + parts[1] + ")");
+        OutputHandler.printInfo("Added: " + parts[0] + " (by: " + parts[1] + ")");
     }
 
     /**
@@ -194,7 +196,7 @@ public class TaskMode implements Mode {
         }
         tasks.add(new Event(parts[0], parts[1], parts[2]));
         saveTasks();
-        OutputHandler.print("Added: " + parts[0] + " (from: " + parts[1] + " to: " + parts[2] + ")");
+        OutputHandler.printInfo("Added: " + parts[0] + " (from: " + parts[1] + " to: " + parts[2] + ")");
     }
 
     /**
@@ -202,7 +204,7 @@ public class TaskMode implements Mode {
      */
     private void listTasks() {
         if (tasks.isEmpty()) {
-            OutputHandler.print("Your task list is empty.");
+            OutputHandler.printInfo("Your task list is empty.");
             return;
         }
 
@@ -250,7 +252,7 @@ public class TaskMode implements Mode {
             fieldSetter.apply(tasks.get(index));
         }
 
-        OutputHandler.print("Successfully " + successMsg + " tasks: " + arguments + ".");
+        OutputHandler.printInfo("Successfully " + successMsg + " tasks: " + arguments + ".");
         saveTasks();
     }
 
@@ -269,7 +271,7 @@ public class TaskMode implements Mode {
 
             tasks.get(index).description = parts[1];
             saveTasks();
-            OutputHandler.print("Task updated successfully.");
+            OutputHandler.printInfo("Task updated successfully.");
         } catch (NumberFormatException e) {
             throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
         }
@@ -289,7 +291,7 @@ public class TaskMode implements Mode {
         }
 
         saveTasks();
-        OutputHandler.print("Tasks deleted successfully.");
+        OutputHandler.printInfo("Tasks deleted successfully.");
     }
 
     /**
@@ -325,8 +327,12 @@ public class TaskMode implements Mode {
      */
     private void saveTasks() {
         File directory = new File("data");
-        if (!directory.exists() && !directory.mkdir()) {
-            OutputHandler.printError("Failed to create directory: " + directory.getAbsolutePath());
+        try {
+            if (!directory.exists() && !directory.mkdir()) {
+                throw new DirectoryCreationException("Failed to create directory: " + directory.getAbsolutePath());
+            }
+        } catch (DirectoryCreationException e) {
+            OutputHandler.printError(e.getMessage());
             return;
         }
 
@@ -376,36 +382,37 @@ public class TaskMode implements Mode {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|"); // To correctly escape the pipe
+                try {
+                    String[] parts = line.split("\\|"); // To correctly escape the pipe
 
-                if (parts.length < 5) {
-                    OutputHandler.printWarning("Skipping corrupted task entry: " + line);
-                    continue; // Skip invalid lines
-                }
-
-                String type = parts[0];
-                boolean isCompleted = parts[1].equals("1");
-                boolean isUrgent = parts[2].equals("1");
-                boolean isImportant = parts[3].equals("1");
-                String description = parts[4];
-
-                switch (type) {
-                case "T" -> tasks.add(new Todo(description, isCompleted, isUrgent, isImportant));
-                case "D" -> {
-                    if (parts.length < 6) {
-                        OutputHandler.printWarning("Skipping malformed deadline: " + line);
-                        continue;
+                    if (parts.length < 5) {
+                        throw new CorruptedTaskEntryException("Skipping corrupted task entry: " + line);
                     }
-                    tasks.add(new Deadline(description, isCompleted, isUrgent, isImportant, parts[5]));
-                }
-                case "E" -> {
-                    if (parts.length < 7) {
-                        OutputHandler.printWarning("Skipping malformed event: " + line);
-                        continue;
+
+                    String type = parts[0];
+                    boolean isCompleted = parts[1].equals("1");
+                    boolean isUrgent = parts[2].equals("1");
+                    boolean isImportant = parts[3].equals("1");
+                    String description = parts[4];
+
+                    switch (type) {
+                    case "T" -> tasks.add(new Todo(description, isCompleted, isUrgent, isImportant));
+                    case "D" -> {
+                        if (parts.length < 6) {
+                            throw new CorruptedTaskEntryException("Malformed deadline entry: " + line);
+                        }
+                        tasks.add(new Deadline(description, isCompleted, isUrgent, isImportant, parts[5]));
                     }
-                    tasks.add(new Event(description, isCompleted, isUrgent, isImportant, parts[5], parts[6]));
-                }
-                default -> OutputHandler.printWarning("Unknown task type in file: " + line);
+                    case "E" -> {
+                        if (parts.length < 7) {
+                            throw new CorruptedTaskEntryException("Malformed event entry: " + line);
+                        }
+                        tasks.add(new Event(description, isCompleted, isUrgent, isImportant, parts[5], parts[6]));
+                    }
+                    default -> throw new CorruptedTaskEntryException("Unknown task type: " + type);
+                    }
+                } catch (CorruptedTaskEntryException e) {
+                    OutputHandler.printError(e.getMessage());
                 }
             }
         } catch (IOException e) {
