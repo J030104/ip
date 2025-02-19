@@ -134,7 +134,6 @@ public class TaskMode implements Mode {
     public void start(Scanner scanner) {
         OutputHandler.printInfo(WELCOME_MESSAGE + PROMPT);
 
-//        label:
         while (true) {
             try {
                 String input = scanner.nextLine().trim();
@@ -146,7 +145,6 @@ public class TaskMode implements Mode {
                     case "exit" -> {
                         OutputHandler.printInfo("Exiting Task Mode.");
                         return;
-//                        break label;
                     }
                     case "todo" -> addTodo(arguments);
                     case "deadline" -> addDeadline(arguments);
@@ -171,7 +169,7 @@ public class TaskMode implements Mode {
 
 
     private static class HelpHandler implements Helper {
-        public static final String DELETE_DETAIL = "\n\n\"delete\" [description] can only remove one task at a time.";
+        public static final String DELETE_DETAIL = "\n\n\"delete [description]\" can only remove one task at a time.";
 
         public static void help() {
             OutputHandler.print(PROMPT + DELETE_DETAIL);
