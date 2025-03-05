@@ -19,8 +19,6 @@ public class EchoMode implements Mode {
 
     /**
      * Starts Echo Mode and repeats user input until the user exits.
-     *
-     * @param scanner Scanner object to read user input.
      */
     @Override
     public void start(Scanner scanner) {
@@ -36,8 +34,4 @@ public class EchoMode implements Mode {
             OutputHandler.print(input);
         }
     }
-
-    // Future extension: Implement stop() if needed in the future.
-    // @Override
-    // public void stop(Scanner scanner) {}
 }

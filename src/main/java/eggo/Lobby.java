@@ -9,7 +9,7 @@ import mode.TaskMode;
 import mode.EchoMode;
 
 /**
- * Represents a eggo lobby where users can interact with and switch between different modes.
+ * Represents Eggo lobby where users can interact with and switch between different modes.
  * The lobby serves as the main entry point and management interface for available eggo modes.
  */
 public class Lobby {
@@ -24,7 +24,6 @@ public class Lobby {
         modes.put("task", new TaskMode()); // Register Task Mode
     }
 
-    
     /**
      * Features:
      * - Predefined responses for common input cases.
@@ -34,8 +33,8 @@ public class Lobby {
         private static final Map<String, String> responseMap = new HashMap<>();
 
         static {
-//            responseMap.put("empty", "I didn't catch that. Could you try again?");
             responseMap.put("hello", "Hi! How can I assist you today?");
+            responseMap.put("what's your name?", "My name is Eggo! How can I assist you today?");
         }
 
         public static Map<String, String> getResponseMap() {
@@ -84,14 +83,13 @@ public class Lobby {
                     resolveInputResponse(input, responseMap);
                 }
             } catch (Exception e) {
-
+                // The exception has been handled
             }
         }
     }
 
     public void resolveInputResponse(String input, Map<String, String> responseMap) throws EggoCommandException {
         if (!responseMap.containsKey(input)) {
-//            input = "empty";
             throw new EggoCommandException();
         }
 
