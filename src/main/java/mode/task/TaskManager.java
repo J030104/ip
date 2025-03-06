@@ -119,6 +119,31 @@ public class TaskManager {
         TaskStorage.saveTasks();
     }
 
+    public static void findTask(String arguments) throws TaskNotFoundException, InvalidCommandException {
+        if (arguments.isEmpty()) {
+            throw new InvalidTaskFormatException("Usage: find [keyword]");
+        }
+
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(arguments.toLowerCase())) {
+                matchingTasks.add(task);
+            }
+        }
+
+        if (matchingTasks.isEmpty()) {
+            OutputHandler.printInfo("No matching tasks found for: " + arguments);
+            return;
+        }
+
+        StringBuilder output = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            output.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+        }
+
+        OutputHandler.print(output.toString());
+    }
+
     /**
      * Modifies a task's description.
      */
