@@ -84,7 +84,7 @@ public class TaskStorage {
                     String[] parts = line.split("\\|"); // To correctly escape the pipe
 
                     if (parts.length < 5) {
-                        throw new CorruptedTaskEntryException("Skipping corrupted TaskManager entry: " + line);
+                        throw new CorruptedTaskEntryException("Skipping corrupted task entry: " + line);
                     }
 
                     String type = parts[0];
@@ -107,7 +107,7 @@ public class TaskStorage {
                         }
                         tasks.add(new Event(description, isCompleted, isUrgent, isImportant, parts[5], parts[6]));
                     }
-                    default -> throw new CorruptedTaskEntryException("Unknown TaskManager type: " + type);
+                    default -> throw new CorruptedTaskEntryException("Unknown task type: " + type);
                     }
                 } catch (CorruptedTaskEntryException e) {
                     OutputHandler.printError(e.getMessage());

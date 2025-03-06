@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import exception.EggoCommandException;
+
+import mode.Mode;
 import mode.TaskMode;
 import mode.EchoMode;
 
@@ -13,7 +15,7 @@ import mode.EchoMode;
  * The lobby serves as the main entry point and management interface for available eggo modes.
  */
 public class Lobby {
-    private final Map<String, mode.Mode> modes; // Stores available eggo modes
+    private final Map<String, Mode> modes; // Stores available eggo modes
 
     /**
      * Initializes the eggo lobby with different modes.

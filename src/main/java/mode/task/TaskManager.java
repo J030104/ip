@@ -13,9 +13,9 @@ import exception.TaskNotFoundException;
 
 public class TaskManager {
 
-    protected static List<Task> tasks;
+    protected static List<Task> tasks = new ArrayList<>();
 
-    public TaskManager() {
+    static {
         tasks = new ArrayList<>();
         TaskStorage.loadTasks(); // Load existing tasks from file
     }
@@ -67,7 +67,7 @@ public class TaskManager {
      */
     public static void listTasks() {
         if (tasks.isEmpty()) {
-            OutputHandler.printInfo("Your mode.task list is empty.");
+            OutputHandler.printInfo("Your task list is empty.");
             return;
         }
 
@@ -76,7 +76,7 @@ public class TaskManager {
             output.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
 
-        output.append("\n").append("Total: ").append(tasks.size()).append(" mode.task(s).");
+        output.append("\n").append("Total: ").append(tasks.size()).append(" task(s).");
         OutputHandler.print(output.toString());
     }
 
@@ -120,13 +120,13 @@ public class TaskManager {
     }
 
     /**
-     * Modifies a mode.task's description.
+     * Modifies a task's description.
      */
     public static void renameTask(String arguments) throws InvalidTaskFormatException, TaskNotFoundException, InvalidCommandException {
         try {
             String[] parts = arguments.split(" ", 2);
             if (parts.length < 2) {
-                throw new InvalidTaskFormatException("Usage: rename [mode.task number] [new description]");
+                throw new InvalidTaskFormatException("Usage: rename [task number] [new description]");
             }
 
             int index = Integer.parseInt(parts[0]) - 1;
@@ -136,7 +136,7 @@ public class TaskManager {
             TaskStorage.saveTasks();
             OutputHandler.printInfo("Task updated successfully.");
         } catch (NumberFormatException e) {
-            throw new InvalidCommandException("Invalid mode.task number format. Use numbers only.", e);
+            throw new InvalidCommandException("Invalid task number format. Use numbers only.", e);
         }
     }
 
@@ -153,12 +153,12 @@ public class TaskManager {
                 tasks.remove(index);
             }
         } catch (InvalidCommandException | TaskNotFoundException e) {
-            // If parsing fails, assume arguments is a mode.task description
+            // If parsing fails, assume arguments is a task description
             Task taskToRemove = null;
             for (Task task : tasks) {
                 if (task.getDescription().equals(arguments)) {
                     taskToRemove = task;
-                    break; // Only remove one matching mode.task
+                    break; // Only remove one matching task
                 }
             }
             if (taskToRemove != null) {
