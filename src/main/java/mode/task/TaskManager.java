@@ -11,8 +11,17 @@ import exception.InvalidCommandException;
 import exception.InvalidTaskFormatException;
 import exception.TaskNotFoundException;
 
+/**
+ * Manages the task list, including adding, updating, deleting, searching, and listing tasks.
+ * <p>
+ * This class serves as the central handler for all task-related operations.
+ * It interacts with {@link TaskStorage} to persist task data and ensures task-related commands
+ * are executed correctly.
+ * </p>
+ */
 public class TaskManager {
 
+    /** List storing all tasks */
     protected static List<Task> tasks = new ArrayList<>();
 
     static {
@@ -25,7 +34,10 @@ public class TaskManager {
     }
 
     /**
-     * Adds a new Todo to the list.
+     * Adds a new Todo task to the list.
+     *
+     * @param description Description of the task
+     * @throws InvalidTaskFormatException If the description is empty
      */
     public static void addTodo(String description) throws InvalidTaskFormatException {
         if (description.isEmpty()) {
@@ -37,7 +49,11 @@ public class TaskManager {
     }
 
     /**
-     * Adds a new Deadline to the list.
+     * Adds a new Deadline task with a specific due date.
+     *
+     * @param arguments Description and due date of the deadline task in the format:
+     *                  "description /by yyyy-MM-dd HHmm" (Best practice)
+     * @throws InvalidTaskFormatException If the format is incorrect
      */
     public static void addDeadline(String arguments) throws InvalidTaskFormatException {
         String[] parts = arguments.split(" /by ", 2);
@@ -50,7 +66,11 @@ public class TaskManager {
     }
 
     /**
-     * Adds a new Event to the list.
+     * Adds a new Event task with a specific start and end time.
+     *
+     * @param arguments Description, start time, and end time in the format:
+     *                  "description /from yyyy-MM-dd HHmm /to yyyy-MM-dd HHmm" (Best practice)
+     * @throws InvalidTaskFormatException If the format is incorrect
      */
     public static void addEvent(String arguments) throws InvalidTaskFormatException {
         String[] parts = arguments.split(" /from | /to ", 3);
@@ -63,7 +83,10 @@ public class TaskManager {
     }
 
     /**
-     * Lists all tasks with their statuses.
+     * Lists all tasks currently stored.
+     * <p>
+     * Outputs tasks in a numbered format, including their type, status, and description.
+     * </p>
      */
     public static void listTasks() {
         if (tasks.isEmpty()) {
@@ -81,7 +104,7 @@ public class TaskManager {
     }
 
     /**
-     * Marks tasks as completed or not.
+     * Updates task done status.
      */
     public static void updateTasksDone(String arguments, boolean status) throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isCompleted = status; return null; }, "marked as done");
@@ -119,6 +142,14 @@ public class TaskManager {
         TaskStorage.saveTasks();
     }
 
+
+    /**
+     * Searches for tasks containing a given keyword in their description.
+     *
+     * @param arguments The keyword to search for
+     * @throws TaskNotFoundException If no matching tasks are found
+     * @throws InvalidCommandException If the search query is empty
+     */
     public static void findTask(String arguments) throws TaskNotFoundException, InvalidCommandException {
         if (arguments.isEmpty()) {
             throw new InvalidTaskFormatException("Usage: find [keyword]");
@@ -145,7 +176,12 @@ public class TaskManager {
     }
 
     /**
-     * Modifies a task's description.
+     * Renames a task based on its index.
+     *
+     * @param arguments Task index followed by the new description
+     * @throws InvalidTaskFormatException If the format is incorrect
+     * @throws TaskNotFoundException If the task index is invalid
+     * @throws InvalidCommandException If the input is improperly formatted
      */
     public static void renameTask(String arguments) throws InvalidTaskFormatException, TaskNotFoundException, InvalidCommandException {
         try {
@@ -166,7 +202,10 @@ public class TaskManager {
     }
 
     /**
-     * Deletes tasks by index while also support delete by name.
+     * Deletes tasks by index or by matching description.
+     *
+     * @param arguments Task indices or task description to delete
+     * @throws InvalidCommandException If the task is not found
      */
     public static void deleteTasks(String arguments) throws InvalidCommandException {
         try {
@@ -198,7 +237,18 @@ public class TaskManager {
     }
 
     /**
-     * Parses space-separated TaskStorage indices and validates them.
+     * Parses space-separated task indices from the provided string and validates them.
+     * <p>
+     * This method splits the input string into individual indices, converts them to integers,
+     * and ensures they are within valid bounds. If an index is out of range, a
+     * {@link TaskNotFoundException} is thrown. If the input contains non-numeric values,
+     * an {@link InvalidCommandException} is thrown.
+     * </p>
+     *
+     * @param arguments A space-separated string of task indices (e.g., "1 3 5").
+     * @return A list of valid integer indices corresponding to the task list.
+     * @throws TaskNotFoundException If any index is out of bounds.
+     * @throws InvalidCommandException If the input format is incorrect (e.g., contains non-numeric values).
      */
     private static List<Integer> parseTaskIndices(String arguments) throws TaskNotFoundException, InvalidCommandException {
         // Have to take care of the delimiter issue here
@@ -218,7 +268,10 @@ public class TaskManager {
     }
 
     /**
-     * Validates that a TaskStorage index is within bounds.
+     * Validates that a task index is within bounds.
+     *
+     * @param index The index of the task to validate
+     * @throws TaskNotFoundException If the index is out of range
      */
     private static void validateIndex(int index) throws TaskNotFoundException {
         if (index < 0 || index >= tasks.size()) {
