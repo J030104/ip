@@ -13,7 +13,7 @@ import exception.TaskNotFoundException;
 
 public class TaskManager {
 
-    protected static List<Task> tasks = new ArrayList<>();
+    protected static List<Task> tasks;
 
     static {
         tasks = new ArrayList<>();
@@ -119,46 +119,62 @@ public class TaskManager {
         TaskStorage.saveTasks();
     }
 
-    public static void findTask(String arguments) throws TaaskNotFoundException, InvalidCommandException {
+    public static void findTask(String arguments) throws TaskNotFoundException {
         if (arguments.isEmpty()) {
             throw new InvalidTaskFormatException("Usage: find [keyword] or find /type [todo|deadline|event]");
         }
 
-        List<Task> matchingTasks = new ArrayList<>();
+        List<Task> matchingTasks;
 
         if (arguments.startsWith("/type ")) {
-            String type = arguments.substring(6).trim().toLowerCase();
-
-            for (Task task : tasks) {
-                if ((type.equals("todo") && task instanceof Todo) ||
-                        (type.equals("deadline") && task instanceof Deadline) ||
-                        (type.equals("event") && task instanceof Event)) {
-                    matchingTasks.add(task);
-                }
-            }
-
-            if (matchingTasks.isEmpty()) {
-                OutputHandler.printInfo("No tasks found for type: " + type);
-                return;
-            }
+            String type = extractTaskType(arguments);
+            matchingTasks = findTasksByType(type);
         } else {
-            // Perform keyword search (original behavior)
-            for (Task task : tasks) {
-                if (task.getDescription().toLowerCase().contains(arguments.toLowerCase())) {
-                    matchingTasks.add(task);
-                }
-            }
-
-            if (matchingTasks.isEmpty()) {
-                OutputHandler.printInfo("No matching tasks found for: " + arguments);
-                return;
-            }
+            matchingTasks = findTasksByKeyword(arguments);
         }
 
-        // Print matching tasks
+        printMatchingTasks(matchingTasks, arguments);
+    }
+
+    // Extracts the task type from the command
+    private static String extractTaskType(String arguments) {
+        return arguments.substring(6).trim().toLowerCase();
+    }
+
+    // Finds tasks by keyword search
+    private static List<Task> findTasksByKeyword(String keyword) {
+        List<Task> results = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                results.add(task);
+            }
+        }
+        return results;
+    }
+
+    // Finds tasks by type (todo, deadline, event)
+    private static List<Task> findTasksByType(String type) {
+        List<Task> results = new ArrayList<>();
+        for (Task task : tasks) {
+            if ((type.equals("todo") && task instanceof Todo) ||
+                    (type.equals("deadline") && task instanceof Deadline) ||
+                    (type.equals("event") && task instanceof Event)) {
+                results.add(task);
+            }
+        }
+        return results;
+    }
+
+    // Prints the list of matching tasks
+    private static void printMatchingTasks(List<Task> tasks, String searchCriteria) {
+        if (tasks.isEmpty()) {
+            OutputHandler.printInfo("No matching tasks found for: " + searchCriteria);
+            return;
+        }
+
         StringBuilder output = new StringBuilder("Here are the matching tasks in your list:\n");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            output.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            output.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
 
         OutputHandler.print(output.toString());
