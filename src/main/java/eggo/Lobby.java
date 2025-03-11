@@ -16,6 +16,7 @@ import mode.EchoMode;
  */
 public class Lobby {
     private final Map<String, Mode> modes; // Stores available Eggo modes
+    private static String availableModes;
 
     /**
      * Initializes the Eggo lobby with different modes.
@@ -25,6 +26,7 @@ public class Lobby {
         modes = new HashMap<>();
         modes.put("echo", new EchoMode()); // Register Echo Mode
         modes.put("task", new TaskMode()); // Register Task Mode
+        availableModes = String.join(", ", modes.keySet());
     }
 
     /**
@@ -62,19 +64,16 @@ public class Lobby {
      */
     public void start(Scanner scanner) {
 
-        // Generate a list of available modes dynamically
-        String availableModes = String.join(", ", modes.keySet());
-
         // Display the welcome message with available modes
-        final String welcome = """
+        final String WELCOME = """
                 Welcome to the Chatbot Lobby!
                 Type a mode name to enter a mode.
                 
                 Available modes: %s
-                Type 'help' for assistance. (Currently Unavailable)"""
+                Type 'help' for assistance."""
                 .formatted(availableModes);
 
-        OutputHandler.printInfo(welcome);
+        OutputHandler.printInfo(WELCOME);
 
         while (true) {
             try {
@@ -84,8 +83,7 @@ public class Lobby {
                     OutputHandler.printInfo("Exiting chatbot Eggo. Goodbye!");
                     break;
                 } else if (input.equalsIgnoreCase("help")) {
-                    // Placeholder for help system (unavailable for now)
-                    OutputHandler.printInfo("Help is currently unavailable.");
+                    HelpHandler.help();
                 } else if (modes.containsKey(input)) {
                     // Switch to the selected mode
                     modes.get(input).start(scanner);
@@ -117,5 +115,16 @@ public class Lobby {
 
         String response = responseMap.get(input.toLowerCase());
         OutputHandler.print(response);
+    }
+
+    private static class HelpHandler implements Helper {
+        static final String HELP_MESSAGE = """
+            Type a mode name to enter a mode.
+            Available modes: %s"""
+            .formatted(availableModes);
+
+        public static void help() {
+            OutputHandler.print(HELP_MESSAGE);
+        }
     }
 }
