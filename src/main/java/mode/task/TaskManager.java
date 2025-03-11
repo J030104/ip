@@ -146,10 +146,10 @@ public class TaskManager {
      * Searches for tasks containing a given keyword in their description.
      *
      * @param arguments The keyword to search for
+     * @throws InvalidTaskFormatException If the search query is empty
      * @throws TaskNotFoundException If no matching tasks are found
-     * @throws InvalidCommandException If the search query is empty
      */
-    public static void findTask(String arguments) throws TaskNotFoundException {
+    public static void findTask(String arguments) throws InvalidTaskFormatException, TaskNotFoundException {
         if (arguments.isEmpty()) {
             throw new InvalidTaskFormatException("Usage: find [keyword] or find /type [todo|deadline|event]");
         }
@@ -187,8 +187,8 @@ public class TaskManager {
         List<Task> results = new ArrayList<>();
         for (Task task : tasks) {
             if ((type.equals("todo") && task instanceof Todo) ||
-                    (type.equals("deadline") && task instanceof Deadline) ||
-                    (type.equals("event") && task instanceof Event)) {
+                (type.equals("deadline") && task instanceof Deadline) ||
+                (type.equals("event") && task instanceof Event)) {
                 results.add(task);
             }
         }
@@ -196,10 +196,9 @@ public class TaskManager {
     }
 
     // Prints the list of matching tasks
-    private static void printMatchingTasks(List<Task> tasks, String searchCriteria) {
+    private static void printMatchingTasks(List<Task> tasks, String searchCriteria) throws TaskNotFoundException {
         if (tasks.isEmpty()) {
-            OutputHandler.printInfo("No matching tasks found for: " + searchCriteria);
-            return;
+            throw new TaskNotFoundException("No matching tasks found for: " + searchCriteria);
         }
 
         StringBuilder output = new StringBuilder("Here are the matching tasks in your list:\n");

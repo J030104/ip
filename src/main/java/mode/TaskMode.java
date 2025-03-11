@@ -66,7 +66,7 @@ public class TaskMode implements Mode {
                     default -> OutputHandler.printWarning("Unknown command: " + command);
                 }
             } catch (Exception e) {
-                OutputHandler.printError("Exception Caught: " + e.getClass() + "\n" + e.getMessage());
+                OutputHandler.printError(e.getMessage());
             }
         }
     }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import exception.EggoCommandException;
+import exception.InvalidCommandException;
 
 import mode.Mode;
 import mode.TaskMode;
@@ -103,15 +103,16 @@ public class Lobby {
 
     /**
      * Resolves user input by checking against predefined responses.
-     * If the input is not recognized, an EggoCommandException is thrown.
+     * If the input is not recognized, an InvalidCommandException is thrown.
      *
      * @param input The user input string to be checked.
      * @param responseMap A map of predefined responses.
-     * @throws EggoCommandException If the input is not found in the predefined response map.
+     * @throws InvalidCommandException If the input is not found in the predefined response map.
      */
-    public void resolveInputResponse(String input, Map<String, String> responseMap) throws EggoCommandException {
+    public void resolveInputResponse(String input, Map<String, String> responseMap) throws InvalidCommandException {
         if (!responseMap.containsKey(input)) {
-            throw new EggoCommandException();
+            OutputHandler.print("I didn't catch that. Could you try again?");
+            throw new InvalidCommandException();
         }
 
         String response = responseMap.get(input.toLowerCase());
