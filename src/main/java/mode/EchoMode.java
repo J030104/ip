@@ -29,7 +29,7 @@ public class EchoMode implements Mode {
         while (true) {
             String input = scanner.nextLine();
 
-            if (input.equalsIgnoreCase("exit"h) || input.equalsIgnoreCase("bye")) {
+            if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("bye")) {
                 OutputHandler.printInfo("Exiting Echo Mode.");
                 break;
             }
