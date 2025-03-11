@@ -16,8 +16,10 @@ import mode.task.TaskManager;
  */
 public class TaskMode implements Mode {
     public static final String WELCOME_MESSAGE = """
-            ========== Welcome to Task Mode! ==========\n\n""";
-    public static final String PROMPT = """
+            Welcome to Task Mode!
+            Type 'help' to view the help menu.
+            Type 'exit' to return to the Lobby.""";
+    public static final String HELP_MESSAGE = """
             Type 'list' to view your tasks.
             Type 'todo [description]' to add a to-do.
             Type 'deadline [description] /by [time]' to add a deadline.
@@ -30,12 +32,11 @@ public class TaskMode implements Mode {
             Type 'noturg [indices]' to remove urgent mark.
             Type 'imp [indices]' to mark tasks as important.
             Type 'notimp [indices]' to remove important mark.
-            Type 'help' to view the help menu.
             Type 'exit' to return to the Lobby.""";
 
     @Override
     public void start(Scanner scanner) {
-        OutputHandler.printInfo(WELCOME_MESSAGE + PROMPT);
+        OutputHandler.printInfo(WELCOME_MESSAGE);
 
         while (true) {
             try {
@@ -75,7 +76,7 @@ public class TaskMode implements Mode {
         public static final String DELETE_DETAIL = "\n\n\"delete [description]\" can only remove one task at a time.";
 
         public static void help() {
-            OutputHandler.print(PROMPT + DELETE_DETAIL);
+            OutputHandler.print(HELP_MESSAGE + DELETE_DETAIL);
         }
     }
 }

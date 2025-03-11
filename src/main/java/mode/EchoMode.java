@@ -6,7 +6,7 @@ import eggo.OutputHandler;
 
 /**
  * EchoMode is a mode where the chatbot repeats user input verbatim.
- * Users can exit this mode by typing "exit".
+ * Users can exit this mode by typing "exit" or "bye".
  */
 public class EchoMode implements Mode {
 
@@ -14,8 +14,8 @@ public class EchoMode implements Mode {
      * Message displayed when the user enters Echo Mode.
      */
     private static final String PROMPT = """
-            You have entered Echo Mode! Type something, and I'll repeat it.
-            Press 'Ctrl + Q' (Currently Unavailable, type 'exit' or 'bye' instead) to return to the lobby.""";
+        You have entered Echo Mode! Type something, and I'll repeat it.
+        Type 'exit' or 'bye' to return to the lobby.""";
 
     /**
      * Starts Echo Mode and repeats user input until the user exits.
@@ -29,7 +29,7 @@ public class EchoMode implements Mode {
         while (true) {
             String input = scanner.nextLine();
 
-            if (input.equalsIgnoreCase("exit")) {
+            if (input.equalsIgnoreCase("exit"h) || input.equalsIgnoreCase("bye")) {
                 OutputHandler.printInfo("Exiting Echo Mode.");
                 break;
             }

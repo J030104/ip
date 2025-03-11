@@ -68,9 +68,10 @@ public class Lobby {
         final String WELCOME = """
                 Welcome to the Chatbot Lobby!
                 Type a mode name to enter a mode.
-                
                 Available modes: %s
-                Type 'help' for assistance."""
+                
+                Type 'help' for assistance.
+                Type 'exit' to leave."""
                 .formatted(availableModes);
 
         OutputHandler.printInfo(WELCOME);
@@ -120,7 +121,8 @@ public class Lobby {
     private static class HelpHandler implements Helper {
         static final String HELP_MESSAGE = """
             Type a mode name to enter a mode.
-            Available modes: %s"""
+            Available modes: %s
+            Type 'exit' to leave."""
             .formatted(availableModes);
 
         public static void help() {
