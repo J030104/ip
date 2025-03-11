@@ -10,6 +10,9 @@ public class Eggo {
 
     /**
      * The entry point of the chatbot application.
+     * Initializes the necessary components and starts the chatbot lobby.
+     *
+     * @param args Command-line arguments (not used).
      */
     public static void main(String[] args) {
         // Create a Scanner object to handle user input

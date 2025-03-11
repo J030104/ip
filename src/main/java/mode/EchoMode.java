@@ -5,8 +5,8 @@ import java.util.Scanner;
 import eggo.OutputHandler;
 
 /**
- * This class
- * - Repeats user input verbatim.
+ * EchoMode is a mode where the chatbot repeats user input verbatim.
+ * Users can exit this mode by typing "exit".
  */
 public class EchoMode implements Mode {
 
@@ -19,6 +19,8 @@ public class EchoMode implements Mode {
 
     /**
      * Starts Echo Mode and repeats user input until the user exits.
+     *
+     * @param scanner Scanner object to read user input.
      */
     @Override
     public void start(Scanner scanner) {
