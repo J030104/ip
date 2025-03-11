@@ -14,6 +14,13 @@ import eggo.OutputHandler;
 import exception.CorruptedTaskEntryException;
 import exception.DirectoryCreationException;
 
+/**
+ * Manages the storage and retrieval of tasks from a file.
+ * <p>
+ * This class handles saving tasks to a structured file format and loading them back
+ * into the application when it starts. It ensures task persistence between sessions.
+ * </p>
+ */
 public class TaskStorage {
 
     private static final String FILE_PATH = "data/task_list.txt";
@@ -21,7 +28,16 @@ public class TaskStorage {
     private static final List<Task> tasks = TaskManager.getTasks();
 
     /**
-     * Saves tasks to a file in a structured format.
+     * Saves the current task list to a file.
+     * <p>
+     * The tasks are stored in a structured format where each task type (Todo, Deadline, Event)
+     * is represented by a specific identifier, followed by task properties such as completion
+     * status, urgency, importance, and additional task-specific details.
+     * </p>
+     * <p>
+     * If the storage directory does not exist, it will attempt to create it.
+     * In case of any errors, they will be logged but will not interrupt the program execution.
+     * </p>
      */
     public static void saveTasks() {
         File directory = new File("data");
@@ -69,7 +85,12 @@ public class TaskStorage {
     }
 
     /**
-     * Loads tasks from a file.
+     * Loads tasks from the stored file into the application's task list.
+     * <p>
+     * Reads the task file line by line and reconstructs tasks based on their stored format.
+     * If the file does not exist, no tasks are loaded. The method also performs basic validation
+     * to detect and skip corrupted or malformed entries, logging appropriate error messages.
+     * </p>
      */
     public static void loadTasks() {
         File file = new File(FILE_PATH);

@@ -11,14 +11,15 @@ import mode.TaskMode;
 import mode.EchoMode;
 
 /**
- * Represents Eggo lobby where users can interact with and switch between different modes.
- * The lobby serves as the main entry point and management interface for available eggo modes.
+ * Represents the Eggo lobby where users can interact with and switch between different modes.
+ * The lobby serves as the main entry point and management interface for available Eggo modes.
  */
 public class Lobby {
-    private final Map<String, Mode> modes; // Stores available eggo modes
+    private final Map<String, Mode> modes; // Stores available Eggo modes
 
     /**
-     * Initializes the eggo lobby with different modes.
+     * Initializes the Eggo lobby with different modes.
+     * The available modes are stored in a HashMap for quick access.
      */
     public Lobby() {
         modes = new HashMap<>();
@@ -27,27 +28,37 @@ public class Lobby {
     }
 
     /**
-     * Features:
-     * - Predefined responses for common input cases.
-     * - Default response for unrecognized inputs.
+     * A nested static class responsible for generating predefined responses
+     * to common user inputs and handling default responses for unrecognized inputs.
      */
     public static class ResponseGenerator {
         private static final Map<String, String> responseMap = new HashMap<>();
 
+        // Initialize predefined responses
         static {
             responseMap.put("hello", "Hi! How can I assist you today?");
+            responseMap.put("hi", "Hi! How can I assist you today?");
+            responseMap.put("hey", "Hi! How can I assist you today?");
+            responseMap.put("how are you?", "Hi! I'm great. Thanks for asking! How can I assist you today?");
             responseMap.put("what's your name?", "My name is Eggo! How can I assist you today?");
+            responseMap.put("your name?", "My name is Eggo! How can I assist you today?");
         }
 
+        /**
+         * Retrieves the map containing predefined responses.
+         *
+         * @return A map where keys are user inputs and values are corresponding chatbot responses.
+         */
         public static Map<String, String> getResponseMap() {
             return responseMap;
         }
     }
-    
+
     /**
-     * Starts the eggo lobby, allowing users to choose modes or exit.
+     * Starts the Eggo lobby, allowing users to select modes or exit the application.
+     * The method runs an interactive loop where users can input commands.
      *
-     * @param scanner Scanner object to read user input.
+     * @param scanner Scanner object to read user input from the console.
      */
     public void start(Scanner scanner) {
 
@@ -90,12 +101,20 @@ public class Lobby {
         }
     }
 
+    /**
+     * Resolves user input by checking against predefined responses.
+     * If the input is not recognized, an EggoCommandException is thrown.
+     *
+     * @param input The user input string to be checked.
+     * @param responseMap A map of predefined responses.
+     * @throws EggoCommandException If the input is not found in the predefined response map.
+     */
     public void resolveInputResponse(String input, Map<String, String> responseMap) throws EggoCommandException {
         if (!responseMap.containsKey(input)) {
             throw new EggoCommandException();
         }
 
-        String response = responseMap.get(input);
+        String response = responseMap.get(input.toLowerCase());
         OutputHandler.print(response);
     }
 }
