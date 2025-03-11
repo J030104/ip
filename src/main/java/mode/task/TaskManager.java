@@ -119,23 +119,43 @@ public class TaskManager {
         TaskStorage.saveTasks();
     }
 
-    public static void findTask(String arguments) throws TaskNotFoundException, InvalidCommandException {
+    public static void findTask(String arguments) throws TaaskNotFoundException, InvalidCommandException {
         if (arguments.isEmpty()) {
-            throw new InvalidTaskFormatException("Usage: find [keyword]");
+            throw new InvalidTaskFormatException("Usage: find [keyword] or find /type [todo|deadline|event]");
         }
 
         List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(arguments.toLowerCase())) {
-                matchingTasks.add(task);
+
+        if (arguments.startsWith("/type ")) {
+            String type = arguments.substring(6).trim().toLowerCase();
+
+            for (Task task : tasks) {
+                if ((type.equals("todo") && task instanceof Todo) ||
+                        (type.equals("deadline") && task instanceof Deadline) ||
+                        (type.equals("event") && task instanceof Event)) {
+                    matchingTasks.add(task);
+                }
+            }
+
+            if (matchingTasks.isEmpty()) {
+                OutputHandler.printInfo("No tasks found for type: " + type);
+                return;
+            }
+        } else {
+            // Perform keyword search (original behavior)
+            for (Task task : tasks) {
+                if (task.getDescription().toLowerCase().contains(arguments.toLowerCase())) {
+                    matchingTasks.add(task);
+                }
+            }
+
+            if (matchingTasks.isEmpty()) {
+                OutputHandler.printInfo("No matching tasks found for: " + arguments);
+                return;
             }
         }
 
-        if (matchingTasks.isEmpty()) {
-            OutputHandler.printInfo("No matching tasks found for: " + arguments);
-            return;
-        }
-
+        // Print matching tasks
         StringBuilder output = new StringBuilder("Here are the matching tasks in your list:\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
             output.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
