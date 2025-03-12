@@ -1,10 +1,38 @@
+yo
+help
+echo
+hiiiiii
+emmm
+exit
+echo
+bye
 task
+list
 todo <YI YU CHEN>: Answer CS2113 tutorial questions
 deadline weekly CS2113 quiz Monday /by 9pm
-list
 event CS2113 lecture /from Friday 4 /to 6 pm
+todo test
 list
-mark 1
+mark 1 2
+imp  2 3
+urg 1  3
+urg 1 3
 list
+unmark 2
+notimp 3
+noturg 1
+list
+rename 4  test_passed
+find /type todo
+delete
+delete
+delete n
+delete 6
+delete 3
+delete test_passe
+delete test_passed
+find CS
+list
+
 exit
 exit

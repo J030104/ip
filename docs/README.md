@@ -33,15 +33,15 @@ Hello from
 - Type `todo [description]` to add a To-Do.
 - Type `deadline [description] /by [time]` to add a Deadline.
 - Type `event [description] /from [start time] /to [end time]` to add an Event.
-- Type `mark [index]` to mark tasks as done.
-- Type `unmark [index]` to mark tasks as not done.
+- Type `mark [indices]` to mark tasks as done.
+- Type `unmark [indices]` to mark tasks as not done.
+- Type `urg [indices]` to mark a task as urgent.
+- Type `noturg [indices]` to remove urgent mark.
+- Type `imp [indices]` to mark a task as important.
+- Type `notimp [indices]` to remove important mark.
+- Type `find [keyword]` or `find /type [todo|deadline|event]` to search for tasks.
 - Type `rename [index] [new name]` to rename a task.
-- Type `delete [index]` to remove a task.
-- Type `urg [index]` to mark a task as urgent.
-- Type `noturg [index]` to remove urgent mark.
-- Type `imp [index]` to mark a task as important.
-- Type `notimp [index]` to remove important mark.
-- Type `find [keyword]` to search for tasks.
+- Type `delete [indices]` to remove a task.
 - Type `exit` to return to the Lobby.
 
 ---
