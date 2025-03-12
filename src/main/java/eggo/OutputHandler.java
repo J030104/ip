@@ -12,7 +12,7 @@ package eggo;
  */
 public class OutputHandler {
 
-    public static final String logo = """
+    public static final String LOGO = """
              _____                         
             | ____|   __ _    __ _    ___  
             |  _|    / _` |  / _` |  / _ \\ 
@@ -25,7 +25,7 @@ public class OutputHandler {
     public static final String INDENT = "    ";
 
     public static void greet() {
-        final String intro = "Hello from\n" + logo;
+        final String intro = "Hello from\n" + LOGO;
         print(intro);
 
         final String greeting = """

@@ -105,21 +105,24 @@ public class TaskManager {
     /**
      * Updates task done status.
      */
-    public static void updateTasksDone(String arguments, boolean status) throws TaskNotFoundException, InvalidCommandException {
+    public static void updateTasksDone(String arguments, boolean status)
+            throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isCompleted = status; return null; }, "marked as done");
     }
 
     /**
      * Updates task urgency status.
      */
-    public static void updateTaskUrgency(String arguments, boolean status, String message) throws TaskNotFoundException, InvalidCommandException {
+    public static void updateTaskUrgency(String arguments, boolean status, String message)
+            throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isUrgent = status; return null; }, message);
     }
 
     /**
      * Updates task importance status.
      */
-    public static void updateTaskImportance(String arguments, boolean status, String message) throws TaskNotFoundException, InvalidCommandException {
+    public static void updateTaskImportance(String arguments, boolean status, String message)
+            throws TaskNotFoundException, InvalidCommandException {
         updateTaskField(arguments, task -> { task.isImportant = status; return null; }, message);
     }
 
@@ -130,7 +133,8 @@ public class TaskManager {
      * @param fieldSetter A lambda function to update the task field.
      * @param successMsg  The message to display on successful update.
      */
-    private static void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg) throws TaskNotFoundException, InvalidCommandException {
+    private static void updateTaskField(String arguments, Function<Task, Void> fieldSetter, String successMsg)
+            throws TaskNotFoundException, InvalidCommandException {
         List<Integer> indices = parseTaskIndices(arguments);
 
         for (int index : indices) {

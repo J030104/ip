@@ -59,10 +59,14 @@ public class TaskMode implements Mode {
                     case "list" -> TaskManager.listTasks();
                     case "mark" -> TaskManager.updateTasksDone(arguments, true);
                     case "unmark" -> TaskManager.updateTasksDone(arguments, false);
-                    case "urg" -> TaskManager.updateTaskUrgency(arguments, true, "marked as urgent");
-                    case "noturg" -> TaskManager.updateTaskUrgency(arguments, false, "removed urgent mark");
-                    case "imp" -> TaskManager.updateTaskImportance(arguments, true, "marked as important");
-                    case "notimp" -> TaskManager.updateTaskImportance(arguments, false, "removed important mark");
+                    case "urg" -> TaskManager.updateTaskUrgency(arguments, true,
+                            "marked as urgent");
+                    case "noturg" -> TaskManager.updateTaskUrgency(arguments, false,
+                            "removed urgent mark");
+                    case "imp" -> TaskManager.updateTaskImportance(arguments, true,
+                            "marked as important");
+                    case "notimp" -> TaskManager.updateTaskImportance(arguments, false,
+                            "removed important mark");
                     case "find" -> TaskManager.findTask(arguments);
                     case "rename" -> TaskManager.renameTask(arguments);
                     case "delete" -> TaskManager.deleteTasks(arguments);
