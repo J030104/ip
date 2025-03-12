@@ -26,12 +26,13 @@ public class TaskMode implements Mode {
             Type 'event [description] /from [start time] /to [end time]' to add an event.
             Type 'mark [indices]' to mark tasks as done.
             Type 'unmark [indices]' to mark tasks as not done.
-            Type 'rename [index] [new task name]' to rename a task).
-            Type 'delete [indices]' to remove tasks.
             Type 'urg [indices]' to mark tasks as urgent.
             Type 'noturg [indices]' to remove urgent mark.
             Type 'imp [indices]' to mark tasks as important.
             Type 'notimp [indices]' to remove important mark.
+            Type 'find [keyword]' or 'find /type [todo|deadline|event]' to find tasks).
+            Type 'rename [index] [new task name]' to rename a task).
+            Type 'delete [indices]' to remove tasks.
             Type 'exit' to return to the Lobby.""";
 
     @Override
