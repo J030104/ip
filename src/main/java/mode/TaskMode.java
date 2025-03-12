@@ -32,7 +32,9 @@ public class TaskMode implements Mode {
             Type 'noturg [indices]' to remove urgent mark.
             Type 'imp [indices]' to mark tasks as important.
             Type 'notimp [indices]' to remove important mark.
-            Type 'exit' to return to the Lobby.""";
+            Type 'exit' to return to the Lobby.
+            
+            Indices should be separated by only 1 space.""";
 
     @Override
     public void start(Scanner scanner) {

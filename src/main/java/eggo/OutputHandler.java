@@ -21,7 +21,7 @@ public class OutputHandler {
                      |___/   |___/         
             """;
 
-    public static final String LINE_SEPARATOR = "_________________________________________________________________________\n";
+    public static final String LINE_SEPARATOR = "__________________________________________________________________________________\n";
     public static final String INDENT = "    ";
 
     public static void greet() {
